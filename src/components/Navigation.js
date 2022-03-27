@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export const Navigation = ({driving_school, logout}) => {
 
-    const [uriPath, setUriPath] = useState("/")
+    const [uriPath, setUriPath] = useState(window.location.pathname.substring(1) === '' ? '/' : window.location.pathname.substring(1))
 
     return (
         <>

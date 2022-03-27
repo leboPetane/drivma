@@ -1,14 +1,40 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
+import { Cookies } from 'react-cookie'
 
-export const Schedule = () => {
+export const Schedule = ({logout}) => {
 
-    //var dt    = new Date();
     useEffect(() => {
-        setWeeklyDates(new Date())
+        let cookie =  new Cookies();
+        if(cookie.get("userId") === undefined) logout();
+
+        const getInstructors = async () => {
+            let cookie =  new Cookies();
+            const instrucs = await getInstructorsFromServer(cookie.get("userId"));
+            if(instrucs) setInstructors(instrucs);
+        }
+    
+        getInstructors();
+        setWeeklyDates(new Date());
     }, [])
 
+    const getInstructorsFromServer = async (drivingSchoolId) => {
+        const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/instructors`, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+        const data = await res.json();
+        const instrucs = data.filter((obj) => obj.driving_school_id === drivingSchoolId);
+
+        return instrucs;
+
+    }
+
     const setWeeklyDates = (dt) => {
+        /* Make sure we start on a sunday */
         var dates = [1,2,3,4,5,6,7];
         if (dt.getDay() > 0){
             dt.setDate(dt.getDate() - dt.getDay());
@@ -45,9 +71,50 @@ export const Schedule = () => {
         alert("Appointment booked for: " + day+"/"+month+"/"+year+"@"+time+ " | " + "Tim Dorothy");
     }
 
-    const instructorFilter = (id) =>{
-        //get only instructor with id
-        alert("Filtering by id: " + id);
+    const instructorFilter = async (id) =>{
+
+        if(id === "0" || id === 0) {setLearners([]); return;}
+
+        //get only learner with instructor with id
+        const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/learners`, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+        const data = await res.json();
+        const theLearners = data.filter((obj) => obj.instructor_id === id);
+        setLearners(theLearners);
+        getLessons(id);
+    }
+
+    const getLessons = async (id) => {
+        const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/lessons`, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+        const data = await res.json();
+        const theLessons = data.filter((obj) => obj.instructor_id === id);
+
+        console.log(theLessons);
+
+        /* filter by date */
+        let theMonth = weekDates[0].month + 1;
+        let theDate = weekDates[0].date;
+        let theYear = weekDates[0].year;
+        const startDate = new Date(theMonth + "/" + theDate + "/" + theYear)
+
+         theMonth = weekDates[6].month + 1;
+         theDate = weekDates[6].date;
+         theYear = weekDates[6].year;
+        const endDate = new Date(theMonth + "/" + theDate + "/" + theYear)
+
+        /* Next -> filter by the start and to date and print  */
+
     }
 
     const learnerFilter = (id) =>{
@@ -58,24 +125,8 @@ export const Schedule = () => {
     const [nextWeekDate, setNextWeekDate]       = useState(new Date())
     const [nextWeekDateStr, setNextWeekDateStr] = useState(nextWeekDate.toDateString())
     const [weekDates, setWeekDays]              = useState([{},{},{},{},{},{},{}])
-    const [instructors, setInstructors]         = useState([{
-            id: 1,
-            name: "Instructor 1"
-        },
-        {
-            id: 2,
-            name: "Instructor 2"
-        }
-    ])
-    const [learners, setLearners]         = useState([{
-            id: 1,
-            name: "Learner 1"
-        },
-        {
-            id: 2,
-            name: "Learner 2"
-        }
-    ])
+    const [instructors, setInstructors]         = useState([])
+    const [learners, setLearners]         = useState([])
     const [schedule, setSchedule]               = useState([
         {
             time:"07:00",
@@ -125,13 +176,13 @@ export const Schedule = () => {
                 <b className='pr-5 mr-3'>Filter by:</b> 
                 <div className='d-flex p-3'>
                     
-                    <select className="form-group form-control mr-2" onChange={(e) => instructorFilter(e.target.value)}>
+                    <select className="form-group form-control mr-2" onChange={(e) => instructorFilter(e.target.value)} disabled={!(instructors.length > 0)}>
                         <option value="0">Instructor</option>
-                        {instructors.map((instr) => <option value={instr.id}>{instr.name}</option>)}
+                        {instructors.length > 0 && instructors.map((instr) => <option key={instr._id} value={instr._id}>{instr.first_name + " " + instr.last_name}</option>)}
                     </select>
-                    <select className="form-group form-control" onChange={(e) => learnerFilter(e.target.value)}>
+                    <select className="form-group form-control" onChange={(e) => learnerFilter(e.target.value)} disabled={!(learners.length > 0)}>
                         <option value="0">Student</option>
-                        {learners.map((learner) => <option value={learner.id}>{learner.name}</option>)}
+                        {learners.length > 0 && learners.map((learnerInp) => <option key={learnerInp._id} value={learnerInp._id}>{learnerInp.first_name + " " + learnerInp.last_name}</option>)}
                     </select>
             </div>
             

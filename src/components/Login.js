@@ -23,10 +23,23 @@ const Login = ({signin}) => {
         console.log(err)
     }
 
-    console.log(res);
-    console.log(data);
+    if (data === null){
+        setErrMsg("Error Logging In. Please try again later.");
+        return;
+    }
 
-    //signin();
+    const user = data.filter((obj) => obj.email === inputEmail)[0];
+
+    if (!user){
+        setErrMsg("No account exist with the entered email address. Please try again");
+        return;
+    }
+
+    if (user.password !== inputPassword){
+        setErrMsg("The password is incorrect.");
+        return;
+    }
+    signin(user);
   }  
 
   const [inputEmail, setInputEmail]       = useState("");
@@ -36,7 +49,8 @@ const Login = ({signin}) => {
   return (
       <div className='mybody'>
           <div className='container text-center mt-5 pt-5'>
-          <h1 className="h3 mb-3 font-weight-normal">RIDEL DRIVING SCHOOL MANAGEMENT</h1>
+          <h1 className="h3 mb-3 font-weight-normal">DRIVMA</h1>
+          <p>A driving school management system</p>
             <form className="form-signin form-group">
                 {(errMsg !== "") && <p className="alert-danger p-2">{errMsg}</p>}
 
