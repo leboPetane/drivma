@@ -48,6 +48,7 @@ export const Dashboard = ({instruct, logout}) => {
   const [instructorPasscode, setPasscode] = useState("");
   const [instructorAddress, setAddress]   = useState("");
   const [instructorArea, setArea]         = useState("");
+  const [errMsg, setErrMsg]               = useState("");
   const [trainingCar, setTrainingCar]     = useState("");
 
   /* functions ============================================*/
@@ -106,19 +107,22 @@ export const Dashboard = ({instruct, logout}) => {
     setSchedules(lessonsFromServer);
   }
   const addTrainer = () => {
-    setFocusInstructor([!newInstructor, {}]);
-    setNewInstructor(!newInstructor);
+    setFocusInstructor(!focusInstructor);
+    setNewInstructor(true);
+
+    setInstructorId(0);
+    setFirstName("");
+    setLastName("");
+    setMobileNumber("");
+    setPasscode("");
+    setEmailAddress("");
+    setArea("");
+    setAddress("");
+    setTrainingCar("");
   }
 
   const saveInstructor = async (id) => {
-    
-    if (id === 0){
-      //save
-      console.log("Ai this one is new na")
-      setFocusInstructor(false);
-      return;
-    }
-
+    let cookie = new Cookies
     var myObj = {
       first_name: firstName,
       last_name: lastName,
@@ -126,8 +130,51 @@ export const Dashboard = ({instruct, logout}) => {
       email: emailAddress,
       passcode: instructorPasscode,
       area: instructorArea,
-      address: instructorAddress
+      address: instructorAddress,
+      driving_school_id: cookie.get("userId")
     };
+
+    if (id === 0){
+      //save
+      if ( firstName === "" || lastName === "" || mobileNumber === "" || emailAddress === "" || instructorPasscode === "" || instructorArea === "" || instructorAddress === "" ){ 
+        setErrMsg("All fields are required.");
+        return;
+      }
+      
+      let res = null;
+      let data = null;
+
+      res  = await fetch(`${process.env.REACT_APP_API_URL}/api/instructors`, {
+          method: 'GET',
+          headers: {
+              'Content-type': 'application/json',
+              'Accept': 'application/json'
+          }
+      });
+      data = await res.json();
+
+      const user = data.filter((obj) => obj.email === emailAddress)[0];
+
+      if (!user){ 
+        //console.log("not a duplicate so i can just go ahead...")
+        res  = await fetch(`${process.env.REACT_APP_API_URL}/api/instructors/`, {
+          method: 'POST',
+          headers: {
+              'Content-type': 'application/json',
+              'Accept': 'application/json'
+          },
+          body: JSON.stringify(myObj)
+        });
+      }else{
+        setErrMsg("Email Address Has Already Been Used.");
+        return;
+      }
+      
+      setFocusInstructor(false);
+      return;
+    }
+
+    
 
     const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/instructors/${id}`, {
       method: 'PUT',
@@ -141,13 +188,6 @@ export const Dashboard = ({instruct, logout}) => {
     setFocusInstructor(false);
     setNewInstructor(false);
 
-  }
-
-  const addSchedule = (id) => {
-    var lesson     = schedules.filter((l) => l._id === id)[0];
-    var newLessons = schedules.filter((obj) => obj.lesson._id !== id);
-    
-    const learner = window.prompt("Enter the name of the student");
   }
 
     return (
@@ -231,7 +271,8 @@ export const Dashboard = ({instruct, logout}) => {
          {focusInstructor &&
             <div className="card card-user">
               <div className="card-header">
-                <h5 className="card-title">Edit Profile</h5>
+                <h5 className="card-title">{(focusInstructor && !newInstructor) ? "Edit Profile" : "Add Instructor"}</h5>
+                {(errMsg !== "") && <p className="alert-danger p-2">{errMsg}</p>}
               </div>
               <div className="card-body">
                 <form>
