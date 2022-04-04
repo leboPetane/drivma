@@ -72,11 +72,10 @@ function App() {
               <div className="col-md-12">
                 <Routes>
                     <Route path='/'            exact element={<Dashboard instruct={instructors} logout={signOut}/>} />
-                    <Route path='/instructors' exact element={<Cars/>} />
-                    <Route path='/cars'        exact element={<Cars/>} />
+                    <Route path='/cars'        exact element={<Cars     logout={signOut}/>} />
                     <Route path='/schedule'    exact element={<Schedule logout={signOut}/>} />
                     <Route path='/students'    exact element={<Students/>} />
-                    <Route path='/lessons'     exact element={<Lessons/>} />
+                    {/* <Route path='/lessons'     exact element={<Lessons/>} /> */}
                   </Routes>
               </div>
             </div>

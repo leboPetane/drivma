@@ -3,18 +3,27 @@ import { useState, useEffect } from 'react'
 import { Cookies } from 'react-cookie'
 
 export const Schedule = ({logout}) => {
+    const [focusedInstructor, setFocusInstructor]   = useState("0")
+    const [focusedLearner,    setFocusedLearner]    = useState("0")
+    const [nextWeekDate,      setNextWeekDate]      = useState(new Date())
+    const [nextWeekDateStr,   setNextWeekDateStr]   = useState(nextWeekDate.toDateString())
+    const [weekDates,         setWeekDays]          = useState([])
+    const [instructors,       setInstructors]       = useState([])
+    const [learners,          setLearners]          = useState([])
+    const [schedule,          setSchedule]          = useState([])
+    const [instructorLessons, setInstructorLessons] = useState([])
+
     useEffect(() => {
         let cookie =  new Cookies();
         if(cookie.get("userId") === undefined) logout();
 
         const getInstructors = async () => {
             let cookie =  new Cookies();
-            const instrucs = await getInstructorsFromServer(cookie.get("userId"));
-            if(instrucs) setInstructors(instrucs);
+            await getInstructorsFromServer(cookie.get("userId"));
         }
     
         getInstructors();
-        instructorFilter("0");
+        instructorFilter("-1");
         if (focusedInstructor === "0") setWeeklyDates(new Date());
     }, [])
 
@@ -28,8 +37,8 @@ export const Schedule = ({logout}) => {
         });
         const data = await res.json();
         const instrucs = data.filter((obj) => obj.driving_school_id === drivingSchoolId);
-
-        return instrucs;
+        setInstructors(instrucs);
+        //return instrucs;
 
     }
 
@@ -116,17 +125,19 @@ export const Schedule = ({logout}) => {
 
     const instructorFilter = async (id) =>{
 
-        //if(id === "0" || id === 0) {
-            //setLearners([]); 
-            //setSchedule([]); 
-            //setFocusInstructor("0");
-            //return;
-        //}
+        if (id === "-1"){
+            setSchedule([]);
+            setInstructorLessons([]);
+            setLearners([]);
+            return;
+        }
 
         setFocusInstructor(id);
+        if (instructors.length === 0){
+            let myCookie = new Cookies()
+            getInstructorsFromServer(myCookie.get("userId"));
+        }
 
-        
-        //get only learner with instructor with id
         const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/learners`, {
             method: 'GET',
             headers: {
@@ -178,10 +189,10 @@ export const Schedule = ({logout}) => {
     const getCurrentLesson = (iTime, cDate) => {
 
         let reqLesson = null;
-            reqLesson = instructorLessons.filter((obj) => (iTime === obj.time && cDate === obj.date))[0];
+            reqLesson = instructorLessons.filter((obj) => (iTime === obj.time && cDate === obj.date));
 
         
-        if (reqLesson === null || reqLesson === undefined) return false;
+        if (reqLesson === null || reqLesson === undefined || reqLesson.length === 0) return false;
         return (reqLesson.length == 0 ? false : reqLesson);
     }
 
@@ -196,12 +207,12 @@ export const Schedule = ({logout}) => {
 
         const data       = await res.json();
         let instructorsArr = [];
+
         instructors.forEach((obj) => {
             instructorsArr.push(obj._id)
         });
 
         let theLessons   = (id === "0" ? data.filter((obj) => instructorsArr.indexOf(obj.instructor_id) >= 0) : data.filter((obj) => obj.instructor_id === id));
-
         setInstructorLessons(theLessons);
 
     }
@@ -211,15 +222,7 @@ export const Schedule = ({logout}) => {
         setFocusedLearner(id);
     }
 
-    const [focusedInstructor, setFocusInstructor]   = useState("0")
-    const [focusedLearner,    setFocusedLearner]    = useState("0")
-    const [nextWeekDate,      setNextWeekDate]      = useState(new Date())
-    const [nextWeekDateStr,   setNextWeekDateStr]   = useState(nextWeekDate.toDateString())
-    const [weekDates,         setWeekDays]          = useState([])
-    const [instructors,       setInstructors]       = useState([])
-    const [learners,          setLearners]          = useState([])
-    const [schedule,          setSchedule]          = useState([])
-    const [instructorLessons, setInstructorLessons] = useState([])
+    
  
     return (
         <div>
@@ -228,11 +231,12 @@ export const Schedule = ({logout}) => {
                 <div className='d-flex p-3'>
                     
                     <select className="form-group form-control mr-2" onChange={(e) => instructorFilter(e.target.value)} disabled={!(instructors.length > 0)}>
-                        <option value="0">Instructor</option>
+                        <option value="-1">{"<Select Instructor>"}</option>
+                        <option value="0">All Instructors</option>
                         {instructors.length > 0 && instructors.map((instr) => <option key={instr._id} value={instr._id}>{instr.first_name + " " + instr.last_name}</option>)}
                     </select>
                     <select className="form-group form-control" onChange={(e) => learnerFilter(e.target.value)} disabled={!(learners.length > 0)}>
-                        <option value="0">Student</option>
+                        <option value="0">{"<Select Student>"}</option>
                         {learners.length > 0 && learners.map((learnerInp) => <option key={learnerInp._id} value={learnerInp._id}>{learnerInp.first_name + " " + learnerInp.last_name}</option>)}
                     </select>
             </div>
@@ -268,43 +272,50 @@ export const Schedule = ({logout}) => {
                                     <tr key={Math.random() * 3546120 }>
                                         <th> {item.time}    </th>
                                         <td>
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[0].date+"/"+weekDates[0].month+"/"+weekDates[0].year) && <p>Lesson with {getCurrentLesson(item.time.substring(0,2),weekDates[0].date+"/"+weekDates[0].month+"/"+weekDates[0].year).learner} <br></br> <span className='badge badge-warning'>{getCurrentLesson(item.time.substring(0,2),weekDates[0].date+"/"+weekDates[0].month+"/"+weekDates[0].year).instructor} </span></p>} 
+                                            {getCurrentLesson(item.time.substring(0,2),weekDates[0].date+"/"+weekDates[0].month+"/"+weekDates[0].year) && 
+                                                getCurrentLesson(item.time.substring(0,2),weekDates[0].date+"/"+weekDates[0].month+"/"+weekDates[0].year).map((obj) => <p key={obj._id}>Lesson with {obj.learner} <br></br> <span className='badge badge-warning'>{obj.instructor} </span></p>) }
                                             {getCurrentLesson(item.time.substring(0,2),weekDates[0].date+"/"+weekDates[0].month+"/"+weekDates[0].year) === false && 
                                                 <button disabled={!weekDates[0].bookable} className='btn btn-outline-info' onClick={() => bookAppointment(weekDates[0].date,weekDates[0].month,weekDates[0].year,item.time)}>Book Appointment</button> 
                                             }
                                         </td>
                                         <td>
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[1].date+"/"+weekDates[1].month+"/"+weekDates[1].year) && <p>Lesson with {getCurrentLesson(item.time.substring(0,2),weekDates[1].date+"/"+weekDates[1].month+"/"+weekDates[1].year).learner} <br></br> <span className='badge badge-warning'>{getCurrentLesson(item.time.substring(0,2),weekDates[1].date+"/"+weekDates[1].month+"/"+weekDates[1].year).instructor} </span></p>} 
+                                            {getCurrentLesson(item.time.substring(0,2),weekDates[1].date+"/"+weekDates[1].month+"/"+weekDates[1].year) && 
+                                                getCurrentLesson(item.time.substring(0,2),weekDates[1].date+"/"+weekDates[1].month+"/"+weekDates[1].year).map((obj) => <p>Lesson with {obj.learner} <br></br> <span className='badge badge-warning'>{obj.instructor} </span></p>)} 
                                             {getCurrentLesson(item.time.substring(0,2),weekDates[1].date+"/"+weekDates[1].month+"/"+weekDates[1].year) === false && 
                                                 <button disabled={!weekDates[1].bookable} className='btn btn-outline-info' onClick={() => bookAppointment(weekDates[1].date,weekDates[1].month,weekDates[1].year,item.time)}>Book Appointment</button> 
                                             }
                                         </td>
                                         <td>
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[2].date+"/"+weekDates[2].month+"/"+weekDates[2].year) && <p>Lesson with {getCurrentLesson(item.time.substring(0,2),weekDates[2].date+"/"+weekDates[2].month+"/"+weekDates[2].year).learner} <br></br> <span className='badge badge-warning'>{getCurrentLesson(item.time.substring(0,2),weekDates[2].date+"/"+weekDates[2].month+"/"+weekDates[2].year).instructor} </span></p>} 
+                                            {getCurrentLesson(item.time.substring(0,2),weekDates[2].date+"/"+weekDates[2].month+"/"+weekDates[2].year) && 
+                                                getCurrentLesson(item.time.substring(0,2),weekDates[2].date+"/"+weekDates[2].month+"/"+weekDates[2].year).map((obj) => <p>Lesson with {obj.learner} <br></br> <span className='badge badge-warning'>{obj.instructor} </span></p>)} 
                                             {getCurrentLesson(item.time.substring(0,2),weekDates[2].date+"/"+weekDates[2].month+"/"+weekDates[2].year) === false && 
                                                 <button disabled={!weekDates[2].bookable} className='btn btn-outline-info' onClick={() => bookAppointment(weekDates[2].date,weekDates[2].month,weekDates[2].year,item.time)}>Book Appointment</button> 
                                             }
                                         </td>
                                         <td>
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[3].date+"/"+weekDates[3].month+"/"+weekDates[3].year) && <p>Lesson with {getCurrentLesson(item.time.substring(0,2),weekDates[3].date+"/"+weekDates[3].month+"/"+weekDates[3].year).learner} <br></br> <span className='badge badge-warning'>{getCurrentLesson(item.time.substring(0,2),weekDates[3].date+"/"+weekDates[3].month+"/"+weekDates[3].year).instructor} </span></p>} 
+                                            {getCurrentLesson(item.time.substring(0,2),weekDates[3].date+"/"+weekDates[3].month+"/"+weekDates[3].year) && 
+                                                getCurrentLesson(item.time.substring(0,2),weekDates[3].date+"/"+weekDates[3].month+"/"+weekDates[3].year).map((obj) => <p>Lesson with {obj.learner} <br></br> <span className='badge badge-warning'>{obj.instructor} </span></p>)} 
                                             {getCurrentLesson(item.time.substring(0,2),weekDates[3].date+"/"+weekDates[3].month+"/"+weekDates[3].year) === false && 
                                                 <button disabled={!weekDates[3].bookable} className='btn btn-outline-info' onClick={() => bookAppointment(weekDates[3].date,weekDates[3].month,weekDates[3].year,item.time)}>Book Appointment</button> 
                                             }
                                         </td>
                                         <td>
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[4].date+"/"+weekDates[4].month+"/"+weekDates[4].year) && <p>Lesson with {getCurrentLesson(item.time.substring(0,2),weekDates[4].date+"/"+weekDates[4].month+"/"+weekDates[4].year).learner} <br></br> <span className='badge badge-warning'>{getCurrentLesson(item.time.substring(0,2),weekDates[4].date+"/"+weekDates[0].month+"/"+weekDates[4].year).instructor} </span></p>} 
+                                            {getCurrentLesson(item.time.substring(0,2),weekDates[4].date+"/"+weekDates[4].month+"/"+weekDates[4].year) && 
+                                                getCurrentLesson(item.time.substring(0,2),weekDates[4].date+"/"+weekDates[4].month+"/"+weekDates[4].year).map((obj) => <p>Lesson with {obj.learner} <br></br> <span className='badge badge-warning'>{obj.instructor} </span></p>)} 
                                             {getCurrentLesson(item.time.substring(0,2),weekDates[4].date+"/"+weekDates[4].month+"/"+weekDates[4].year) === false && 
                                                 <button disabled={!weekDates[4].bookable} className='btn btn-outline-info' onClick={() => bookAppointment(weekDates[4].date,weekDates[4].month,weekDates[4].year,item.time)}>Book Appointment</button> 
                                             }
                                         </td>
                                         <td>
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[5].date+"/"+weekDates[5].month+"/"+weekDates[5].year) && <p>Lesson with {getCurrentLesson(item.time.substring(0,2),weekDates[5].date+"/"+weekDates[5].month+"/"+weekDates[5].year).learner} <br></br> <span className='badge badge-warning'>{getCurrentLesson(item.time.substring(0,2),weekDates[5].date+"/"+weekDates[5].month+"/"+weekDates[5].year).instructor} </span></p>} 
+                                            {getCurrentLesson(item.time.substring(0,2),weekDates[5].date+"/"+weekDates[5].month+"/"+weekDates[5].year) && 
+                                                getCurrentLesson(item.time.substring(0,2),weekDates[5].date+"/"+weekDates[5].month+"/"+weekDates[5].year).map((obj) => <p>Lesson with {obj.learner} <br></br> <span className='badge badge-warning'>{obj.instructor} </span></p>)} 
                                             {getCurrentLesson(item.time.substring(0,2),weekDates[5].date+"/"+weekDates[5].month+"/"+weekDates[5].year) === false && 
                                                 <button disabled={!weekDates[5].bookable} className='btn btn-outline-info' onClick={() => bookAppointment(weekDates[5].date,weekDates[5].month,weekDates[5].year,item.time)}>Book Appointment</button> 
                                             }
                                         </td>
                                         <td>
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[6].date+"/"+weekDates[6].month+"/"+weekDates[6].year) && <p>Lesson with {getCurrentLesson(item.time.substring(0,2),weekDates[6].date+"/"+weekDates[6].month+"/"+weekDates[6].year).learner} <br></br> <span className='badge badge-warning'>{getCurrentLesson(item.time.substring(0,2),weekDates[6].date+"/"+weekDates[6].month+"/"+weekDates[6].year).instructor} </span></p>} 
+                                            {getCurrentLesson(item.time.substring(0,2),weekDates[6].date+"/"+weekDates[6].month+"/"+weekDates[6].year) && 
+                                                getCurrentLesson(item.time.substring(0,2),weekDates[6].date+"/"+weekDates[6].month+"/"+weekDates[6].year).map((obj) => <p>Lesson with {obj.learner} <br></br> <span className='badge badge-warning'>{obj.instructor} </span></p>)} 
                                             {getCurrentLesson(item.time.substring(0,2),weekDates[6].date+"/"+weekDates[6].month+"/"+weekDates[6].year) === false && 
                                                 <button disabled={!weekDates[6].bookable} className='btn btn-outline-info' onClick={() => bookAppointment(weekDates[6].date,weekDates[6].month,weekDates[6].year,item.time)}>Book Appointment</button> 
                                             }
