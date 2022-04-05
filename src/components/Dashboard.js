@@ -97,11 +97,11 @@ export const Dashboard = ({instruct, logout}) => {
     });
 
     const dt = new Date();
-    const dtString = dt.getDate() + "/" + (dt.getMonth()+1) + "/" + dt.getFullYear();
+    const dtString = dt.getDate() + "/" + dt.getMonth() + "/" + dt.getFullYear();
 
     const data = await res.json();
 
-
+    //console.log(data.filter((obj) => obj.instructor_id === id), dtString);
     const lessonsFromServer = data.filter((obj) => obj.instructor_id === id && dtString === obj.date);
 
     setSchedules(lessonsFromServer);

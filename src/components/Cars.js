@@ -241,39 +241,39 @@ export const Cars = ({logout}) => {
                     </table>
                 </div>
             </div>
-            <div class="col-md-12">
+            <div className="col-md-12">
                 {isFocused &&
-                <div class="card card-user">
-                    <div class="card-header">
-                        {/* <h5 class="card-title">Add Car</h5> */}
+                <div className="card card-user">
+                    <div className="card-header">
+                        {/* <h5 className="card-title">Add Car</h5> */}
                         {(errMsg !== "") && <p className="alert-danger p-2">{errMsg}</p>}
 
                     </div>  
-                    <div class="card-body">
+                    <div className="card-body">
                         <form>
-                            <div class="row">
-                                <div class="col-md-6 pr-1">
-                                    <div class="form-group">
+                            <div className="row">
+                                <div className="col-md-6 pr-1">
+                                    <div className="form-group">
                                         <label>Car Name</label>
-                                        <input type="text" class="form-control" value={carName} onChange={(e) => setCarName(e.target.value)}></input>
+                                        <input type="text" className="form-control" value={carName} onChange={(e) => setCarName(e.target.value)}></input>
                                     </div>
                                 </div>
-                                <div class="col-md-6 pl-1">
-                                    <div class="form-group">
+                                <div className="col-md-6 pl-1">
+                                    <div className="form-group">
                                         <label for="exampleInputEmail1">Year</label>
-                                        <input type="number" class="form-control" value={carYear} onChange={(e) => setCarYear(e.target.value)}></input>
+                                        <input type="number" className="form-control" value={carYear} onChange={(e) => setCarYear(e.target.value)}></input>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6 pr-1">
-                                    <div class="form-group">
+                            <div className="row">
+                                <div className="col-md-6 pr-1">
+                                    <div className="form-group">
                                         <label>Disc Expiry Date</label>
-                                        <input type="date" class="form-control" value={carExpiry} onChange={(e) => changeCarExpiry(e.target.value)}></input>
+                                        <input type="date" className="form-control" value={carExpiry} onChange={(e) => changeCarExpiry(e.target.value)}></input>
                                     </div>
                                 </div>
-                                <div class="col-md-6 pl-1">
-                                <div class="form-group">
+                                <div className="col-md-6 pl-1">
+                                <div className="form-group">
                                         <label>Assign To Driver</label>
                                         <select className="form-group form-control" value={assignedDriver} onChange={(e) => setAssignedDriver(e.target.value)}>
                                             <option>
@@ -286,9 +286,9 @@ export const Cars = ({logout}) => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="update ml-auto mr-auto">
-                                <button class="btn btn-primary btn-round" onClick={(e) => {e.preventDefault(); saveCar(focusedCar)}} >Save Car</button>
+                            <div className="row">
+                                <div className="update ml-auto mr-auto">
+                                <button className="btn btn-primary btn-round" onClick={(e) => {e.preventDefault(); saveCar(focusedCar)}} >Save Car</button>
                                 </div>
                             </div>
                         </form>

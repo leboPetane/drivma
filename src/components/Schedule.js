@@ -15,7 +15,7 @@ export const Schedule = ({logout}) => {
 
     useEffect(() => {
         let cookie =  new Cookies();
-        if(cookie.get("userId") === undefined) logout();
+        if(cookie.get("userId") === undefined || cookie.get("UserLoggedIn") === undefined) logout();
 
         const getInstructors = async () => {
             let cookie =  new Cookies();

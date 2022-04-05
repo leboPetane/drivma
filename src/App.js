@@ -74,7 +74,7 @@ function App() {
                     <Route path='/'            exact element={<Dashboard instruct={instructors} logout={signOut}/>} />
                     <Route path='/cars'        exact element={<Cars     logout={signOut}/>} />
                     <Route path='/schedule'    exact element={<Schedule logout={signOut}/>} />
-                    <Route path='/students'    exact element={<Students/>} />
+                    <Route path='/students'    exact element={<Students logout={signOut}/>} />
                     {/* <Route path='/lessons'     exact element={<Lessons/>} /> */}
                   </Routes>
               </div>
