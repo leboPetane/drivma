@@ -50,9 +50,11 @@ export const Dashboard = ({instruct, logout}) => {
   const [instructorArea, setArea]         = useState("");
   const [errMsg, setErrMsg]               = useState("");
   const [trainingCar, setTrainingCar]     = useState("");
+  const [isLoading, setIsLoading]         = useState(false);
 
   /* functions ============================================*/
   const toggleFocus = (id) => {
+    setIsLoading(false);
     if (focusInstructor){
       if (instructorId === id){
         setFocusInstructor(false);
@@ -122,6 +124,7 @@ export const Dashboard = ({instruct, logout}) => {
   }
 
   const saveInstructor = async (id) => {
+    setIsLoading(true);
     let cookie = new Cookies
     var myObj = {
       first_name: firstName,
@@ -167,9 +170,10 @@ export const Dashboard = ({instruct, logout}) => {
         });
       }else{
         setErrMsg("Email Address Has Already Been Used.");
+        setIsLoading(false);
         return;
       }
-      
+      setIsLoading(false);
       setFocusInstructor(false);
       return;
     }
@@ -193,8 +197,8 @@ export const Dashboard = ({instruct, logout}) => {
     return (
         <>
         
-        
         <div className = "row">
+          
           {(focusInstructor && !newInstructor) &&
             <div className = "col-md-4">
                 <div className="card card-user">
@@ -333,7 +337,7 @@ export const Dashboard = ({instruct, logout}) => {
                   </div>
                   <div className="row">
                     <div className="update ml-auto mr-auto">
-                      <button type="submit" className="btn btn-primary btn-round" onClick={(e) => {e.preventDefault();saveInstructor(instructorId)} }>Save Profile</button>
+                      <button type="submit" className="btn btn-primary btn-round" onClick={(e) => {e.preventDefault();saveInstructor(instructorId)} } disabled={isLoading}>Save Profile</button>
                     </div>
                   </div>
                 </form>

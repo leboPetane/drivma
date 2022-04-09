@@ -71,6 +71,7 @@ export const Students = ({logout}) => {
     const [testDate,             setTestDate] = useState("")
     const [errMsg,                 setErrMsg] = useState("")
     const [instructors,       setInstructors] = useState([])
+    const [isLoading,           setIsLoading] = useState(false)
         
     const removeLearner = async (id) => {
         const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/learners/${id}`, {
@@ -124,6 +125,7 @@ export const Students = ({logout}) => {
     }
 
     const focusLearner = (id) => {
+        setIsLoading(false);
         if (focusedLearner === id && memberForm){
             setMemberForm(false);
             setFocusedLearner("");
@@ -185,8 +187,8 @@ export const Students = ({logout}) => {
             setErrMsg("Please Select Driving Instructor");
             return;
         }
-        
-        
+        setIsLoading(true);
+
         const myCookie      = new Cookies();
         let theChosenDriver = instructors.filter((obj) => obj._id === instructor)[0];
 
@@ -215,6 +217,7 @@ export const Students = ({logout}) => {
             },
             body: JSON.stringify(myObj)
         });
+        setIsLoading(false);
 
         if (res.status == 200){
             setMemberForm(false);
@@ -333,7 +336,7 @@ export const Students = ({logout}) => {
                         </div>
                         <div className="row">
                                 <div className="update ml-auto mr-auto">
-                                <button type="submit" className="btn btn-primary btn-round" onClick={(e) => {e.preventDefault(); saveLearner(focusedLearner)}}>Save Learner</button>
+                                <button type="submit" className="btn btn-primary btn-round" onClick={(e) => {e.preventDefault(); saveLearner(focusedLearner)}} disabled={isLoading}>Save Learner</button>
                                 </div>
                          </div>
                         </form>

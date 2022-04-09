@@ -62,8 +62,10 @@ export const Cars = ({logout}) => {
     const [carExpiry,      setCarExpiry]      = useState("")
     const [assignedDriver, setAssignedDriver] = useState("0")
     const [errMsg,         setErrMsg]         = useState("")
+    const [isLoading,      setIsLoading]      = useState(false)
 
     const focusOnCar = (carId) => {
+        setIsLoading(false);
         setErrMsg("");
         if (focusedCar === carId && isFocused){
             setIsFocused(!isFocused);
@@ -130,24 +132,30 @@ export const Cars = ({logout}) => {
     }
 
     const saveCar = async (id) => {
+        setIsLoading(true);
         setErrMsg("");
         if (carName === ""){
             setErrMsg("Car name is required.");
+            setIsLoading(false);
             return;
         }
         if (carYear < 1000){
             setErrMsg("The car year is not valid");
+            setIsLoading(false);
             return;
         }
         if (carYear < 1000){
             setErrMsg("The car year is not valid");
+            setIsLoading(false);
             return;
         }
         if (carExpiry === undefined || carExpiry === null){
             setErrMsg("The Car expiry date is not valid");
+            setIsLoading(false);
             return;
         }
         if (assignedDriver === "0"){
+            setIsLoading(false);
             setErrMsg("Please select a driver");
             return;
         }
@@ -156,6 +164,7 @@ export const Cars = ({logout}) => {
         let theChosenDriver = instructors.filter((obj) => obj._id === assignedDriver)[0];
 
         if (theChosenDriver == undefined){
+            setIsLoading(false);
             setErrMsg("Please select a driver");
             return;
         }
@@ -181,7 +190,7 @@ export const Cars = ({logout}) => {
             },
             body: JSON.stringify(myObj)
         });
-
+        setIsLoading(false);
         if (res.status == 200){
             setIsFocused(false);
             const updatedCars = await getCarsFromServer(myCookie.get("userId"));
@@ -260,7 +269,7 @@ export const Cars = ({logout}) => {
                                 </div>
                                 <div className="col-md-6 pl-1">
                                     <div className="form-group">
-                                        <label for="exampleInputEmail1">Year</label>
+                                        <label htlmfor="exampleInputEmail1">Year</label>
                                         <input type="number" className="form-control" value={carYear} onChange={(e) => setCarYear(e.target.value)}></input>
                                     </div>
                                 </div>
@@ -288,7 +297,7 @@ export const Cars = ({logout}) => {
                             </div>
                             <div className="row">
                                 <div className="update ml-auto mr-auto">
-                                <button className="btn btn-primary btn-round" onClick={(e) => {e.preventDefault(); saveCar(focusedCar)}} >Save Car</button>
+                                <button className="btn btn-primary btn-round" onClick={(e) => {e.preventDefault(); saveCar(focusedCar)}} disabled={isLoading}>Save Car</button>
                                 </div>
                             </div>
                         </form>
