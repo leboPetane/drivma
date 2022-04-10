@@ -134,7 +134,9 @@ export const Dashboard = ({instruct, logout}) => {
       passcode: instructorPasscode,
       area: instructorArea,
       address: instructorAddress,
-      driving_school_id: cookie.get("userId")
+      driving_school_id: cookie.get("userId"),
+      training_car: "",
+      training_car_id: ""
     };
 
     if (id === 0){
@@ -173,6 +175,10 @@ export const Dashboard = ({instruct, logout}) => {
         setIsLoading(false);
         return;
       }
+
+      var mycookie = new Cookies();
+      var inst = await getInstructorsFromServer(mycookie.get("userId"));
+      setInstructors(inst);
       setIsLoading(false);
       setFocusInstructor(false);
       return;

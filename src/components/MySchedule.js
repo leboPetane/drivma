@@ -32,7 +32,7 @@ export const MySchedule = () => {
     }
 
     setFirstName(instructor.first_name);
-    setLastName(instructor.first_name);
+    setLastName(instructor.last_name);
 
     res  = await fetch(`${process.env.REACT_APP_API_URL}/api/lessons`, {
         method: 'GET',
@@ -100,7 +100,7 @@ export const MySchedule = () => {
                             {(errMsg !== "") && <p className="alert-danger p-2">{errMsg}</p>}
 
                             <input type="email" onChange={(e) => setEmail(e.target.value)}   className="form-control" placeholder="Email address" required autoFocus></input>
-                            <input type="text"  onChange={(e) => setPasscode(e.target.value)} className="form-control" placeholder="Password" required></input>
+                            <input type="password"  onChange={(e) => setPasscode(e.target.value)} className="form-control" placeholder="Password" required></input>
                             
                             <button className="btn btn-lg btn-primary btn-block" onClick={(e) => seeSchedule(e)} disabled={isLoading}>Check Schedule</button>
                             {/* <p className="mt-5 mb-3 text-muted">&copy; 2022</p>  */}
