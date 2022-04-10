@@ -82,7 +82,7 @@ export const Students = ({logout}) => {
             }
         });
 
-        if (res.status == 200){
+        if (res.status === 200){
             const myCookie = new Cookies();
             setMemberForm(false);
             const updatedLearners = await getLearnersFromServer(myCookie.get("userId"));
@@ -219,7 +219,7 @@ export const Students = ({logout}) => {
         });
         setIsLoading(false);
 
-        if (res.status == 200){
+        if (res.status === 200){
             setMemberForm(false);
             const updatedLearners = await getLearnersFromServer(myCookie.get("userId"));
 

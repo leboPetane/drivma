@@ -1,15 +1,15 @@
 import { Navigation } from "./components/Navigation";
 import { Dashboard }  from "./components/Dashboard";
-import { Lessons } from "./components/Lessons";
 import { Cars } from "./components/Cars";
 import { Schedule } from "./components/Schedule";
 import { Students } from "./components/Students";
 import { useState, useEffect }   from "react"; 
 import { Routes } from "react-router";
 import Login from "./components/Login";
+import {MySchedule} from "./components/MySchedule";
 
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-import { withCookies, Cookies } from "react-cookie";
+import { Cookies } from "react-cookie";
 
 function App() {
 
@@ -82,7 +82,11 @@ function App() {
           </div>
         </div>
         </div> : 
-          <Login signin={signIn}/>
+          (window.location.pathname === "/myschedule" ?
+            <div className="mybody row"><MySchedule /></div>:
+            <Login  signin={signIn}/>)
+
+          
         }
     </Router>
     

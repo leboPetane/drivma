@@ -121,7 +121,7 @@ export const Cars = ({logout}) => {
             }
         });
 
-        if (res.status == 200){
+        if (res.status === 200){
             const myCookie = new Cookies();
             setIsFocused(false);
             const updatedCars = await getCarsFromServer(myCookie.get("userId"));
@@ -163,7 +163,7 @@ export const Cars = ({logout}) => {
         const myCookie      = new Cookies();
         let theChosenDriver = instructors.filter((obj) => obj._id === assignedDriver)[0];
 
-        if (theChosenDriver == undefined){
+        if (theChosenDriver === undefined){
             setIsLoading(false);
             setErrMsg("Please select a driver");
             return;
@@ -191,7 +191,7 @@ export const Cars = ({logout}) => {
             body: JSON.stringify(myObj)
         });
         setIsLoading(false);
-        if (res.status == 200){
+        if (res.status === 200){
             setIsFocused(false);
             const updatedCars = await getCarsFromServer(myCookie.get("userId"));
             setCars(updatedCars);

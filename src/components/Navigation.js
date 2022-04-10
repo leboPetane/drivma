@@ -8,9 +8,11 @@ export const Navigation = ({driving_school, logout}) => {
     return (
         <>
         <div className="sidebar" data-color="white" data-active-color="danger">
+
             <div className="logo">
+           
                 <a href="#" className="simple-text logo-mini"></a>
-                <a href="#" className="simple-text logo-normal"> Menu </a>
+                <a href="#" className="simple-text logo-normal">  Menu </a>
             </div>
 
             <div className="sidebar-wrapper">
@@ -52,6 +54,7 @@ export const Navigation = ({driving_school, logout}) => {
                  <button className="btn btn-danger  btn-round" onClick={() => logout()}>Logout</button>
 
                 </div>
+                
 
             </div>
         </div>
@@ -65,14 +68,14 @@ export const Navigation = ({driving_school, logout}) => {
                   <span className="navbar-toggler-bar bar2"></span>
                   <span className="navbar-toggler-bar bar3"></span>
                 </button>
-              </div>
-              <a className="navbar-brand" href="#">{driving_school} Driving School</a>
+              </div> <a className="navbar-brand" href="#"><i class="fas fa-circle pr-2 text-success" color="green"></i> {driving_school}  {driving_school.toLowerCase().search("driving school") === -1 ? "Driving School" : ""} </a>
             </div>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
               <span className="navbar-toggler-bar navbar-kebab"></span>
               <span className="navbar-toggler-bar navbar-kebab"></span>
               <span className="navbar-toggler-bar navbar-kebab"></span>
             </button>
+            
             <div className="collapse navbar-collapse justify-content-end" id="navigation">
               
               

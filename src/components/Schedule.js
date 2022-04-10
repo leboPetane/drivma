@@ -193,7 +193,7 @@ export const Schedule = ({logout}) => {
 
         
         if (reqLesson === null || reqLesson === undefined || reqLesson.length === 0) return false;
-        return (reqLesson.length == 0 ? false : reqLesson);
+        return (reqLesson.length === 0 ? false : reqLesson);
     }
 
     const getLessons = async (id, learnerId) => {

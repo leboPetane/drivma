@@ -37,7 +37,12 @@ const Login = ({signin}) => {
         return;
     }
 
-    if (user.password !== inputPassword){
+    var CryptoJS      = require("crypto-js");
+    var ciphertext    = user.password
+    var bytes         = CryptoJS.AES.decrypt(ciphertext, 'dr|v|ngsc00lmanager!@#$%');
+    var decryptedPsw  = bytes.toString(CryptoJS.enc.Utf8);
+
+    if (decryptedPsw !== inputPassword){
         setErrMsg("The password is incorrect.");
         return;
     }
@@ -84,13 +89,15 @@ const Login = ({signin}) => {
     }
     
 
+    var CryptoJS = require("crypto-js");
+    var cipherPsw = CryptoJS.AES.encrypt(inputPassword, 'dr|v|ngsc00lmanager!@#$%').toString();
 
     const myobj = {
         first_name:firstName,
         last_name:lastName,
         driving_school:drivingSchoolName,
         email:inputEmail,
-        password:inputPassword
+        password:cipherPsw
     }
 
     var res = null;
