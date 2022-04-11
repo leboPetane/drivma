@@ -156,6 +156,7 @@ const Login = ({signin}) => {
           <h1 className="h3 mb-3 font-weight-normal">DRIVMA</h1>
            
           <p>{isSignUp ? "Sign Up" : "A driving school management system" }</p> 
+          {!isSignUp && <p className='m-0 p-0 text-info'><i>Demo Account - username: test@test.com, password: test123</i></p>}
 
           {isSignUp ?
           <form className="form-signin form-group jumbotron">
@@ -167,9 +168,10 @@ const Login = ({signin}) => {
             <input type="text"    onChange={(e) => setDrivingSchoolName(e.target.value)} className="form-control" placeholder="Name of your driving school" required></input>
             <input type="text"    onChange={(e) => setFirstName(e.target.value)} className="form-control" placeholder="First Name" required></input>
             <input type="text"    onChange={(e) => setLastName(e.target.value)} className="form-control" placeholder="Last Name" required></input>
-            <button className="btn btn-lg btn-primary btn-block" onClick={(e) => signup(e)}>Sign up</button>
+            <p className="mt-5 mb-3 text-muted"> If you are interested to use this for your driving school please email lebopetane@gmail.com to create an account . </p> 
+
+            <button className="btn btn-lg btn-primary btn-block" onClick={(e) => signup(e)} disabled>Sign up</button>
             <Link to="#" onClick={() => toggeSignUp(false)}>Back to login</Link>
-            {/* <p className="mt-5 mb-3 text-muted">&copy; 2022</p>  */}
 
 
 

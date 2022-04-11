@@ -248,6 +248,7 @@ export const Dashboard = ({instruct, logout}) => {
 
              <div className="p-5">
               <button className="btn btn-primary btn-round" onClick={() => addTrainer()}>+ Toggle Add Trainer</button>
+              <p className='m-0 p-0 text-info text-center'>Your instructor can use their email and passcode to check their daily schedule by visiting {window.location.href + "myschedule"}</p>
 
                </div>
                  <table className="table">
