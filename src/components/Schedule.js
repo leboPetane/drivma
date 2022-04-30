@@ -57,7 +57,7 @@ export const Schedule = ({logout}) => {
                             date: dt.getDate(),
                             month: dt.getMonth(),
                             year: dt.getFullYear(),
-                            bookable: (dt.getFullYear() === newDt.getFullYear() && dt.getMonth() === newDt.getMonth() && dt.getDate() >= newDt.getDate())
+                            bookable: (dt.getTime() > newDt.getTime())
                        }
             dt.setDate(dt.getDate() + 1);
         }
