@@ -64,23 +64,17 @@ function App() {
   return (
     <Router>
       {loggedIn ?
-    <div className="App">
-        <Navigation driving_school={drivingSchool.driving_school} logout={signOut}/> 
-        <div className="main-panel">
-          <div className="content">
-            <div className="row">
-              <div className="col-md-12">
-                <Routes>
-                    <Route path='/'            exact element={<Dashboard instruct={instructors} logout={signOut}/>} />
-                    <Route path='/cars'        exact element={<Cars     logout={signOut}/>} />
-                    <Route path='/schedule'    exact element={<Schedule logout={signOut}/>} />
-                    <Route path='/students'    exact element={<Students logout={signOut}/>} />
-                    {/* <Route path='/lessons'     exact element={<Lessons/>} /> */}
-                  </Routes>
-              </div>
-            </div>
+    <div className="app-container">
+          <Navigation driving_school={drivingSchool.driving_school} logout={signOut} />
+          <div className="main-content">
+            <Routes>
+              <Route path='/' exact element={<Dashboard instruct={instructors} logout={signOut}/>} />
+              <Route path='/cars' exact element={<Cars logout={signOut}/>} />
+              <Route path='/schedule' exact element={<Schedule logout={signOut}/>} />
+              <Route path='/students' exact element={<Students logout={signOut}/>} />
+              {/* <Route path='/lessons' exact element={<Lessons/>} /> */}
+            </Routes>
           </div>
-        </div>
         </div> : 
           (window.location.pathname === "/myschedule" ?
             <div className="mybody row"><MySchedule /></div>:
