@@ -1,89 +1,117 @@
-import { Link }       from "react-router-dom";
-import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 
-export const Navigation = ({driving_school, logout}) => {
+export const Navigation = ({ driving_school, logout }) => {
+    const location = useLocation();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    const [uriPath, setUriPath] = useState(window.location.pathname.substring(1) === '' ? '/' : window.location.pathname.substring(1))
+    // Get current path for active state
+    const getCurrentPath = () => {
+        const path = location.pathname;
+        return path === '/' ? '/' : path.substring(1);
+    };
+
+    const [currentPath, setCurrentPath] = useState(getCurrentPath());
+
+    useEffect(() => {
+        setCurrentPath(getCurrentPath());
+        // Close mobile menu when route changes
+        setIsMobileMenuOpen(false);
+    }, [location]);
+
+    const handleMobileMenuToggle = () => {
+        setIsMobileMenuOpen(!isMobileMenuOpen);
+    };
+
+    const handleNavClick = (path) => {
+        setCurrentPath(path);
+        setIsMobileMenuOpen(false);
+    };
+
+    const navItems = [
+        { path: '/', label: 'Instructors', icon: '👥' },
+        { path: '/schedule', label: 'Schedule', icon: '📅' },
+        { path: '/cars', label: 'Cars', icon: '🚗' },
+        { path: '/students', label: 'Students', icon: '👤' }
+    ];
 
     return (
         <>
-        <div className="sidebar" data-color="white" data-active-color="danger">
+            {/* Mobile Sidebar Overlay */}
+            <div
+                className={`sidebar-overlay ${isMobileMenuOpen ? 'active' : ''}`}
+                onClick={handleMobileMenuToggle}
+            />
 
-            <div className="logo">
-           
-                <a href="#" className="simple-text logo-mini"></a>
-                <a href="#" className="simple-text logo-normal">  Menu </a>
-            </div>
-
-            <div className="sidebar-wrapper">
-                <ul className="nav">
-                    
-                    <li className={(uriPath === "/" ? "active" : "")}>
-                        <Link to="/" onClick={() => setUriPath("/")}>
-                            <i className="nc-icon nc-badge"></i>
-                            <p>Instructors</p>
-                        </Link>
-                    </li>
-                    <li className={(uriPath === "schedule" ? "active" : "")}>
-                        <Link to="schedule" onClick={() => setUriPath("schedule")}>
-                        <i className="nc-icon nc-calendar-60"></i>
-                        <p>Schedule</p>
-                        </Link>
-                    </li>
-                    <li className={(uriPath === "cars" ? "active" : "")}>
-                        <Link to="cars" onClick={() => setUriPath("cars")}>
-                            <i className="nc-icon nc-bus-front-12"></i>
-                            <p>Cars</p>
-                        </Link>
-                    </li>
-                    <li className={(uriPath == "students" ? "active" : "")}>
-                        <Link to="students" onClick={() => setUriPath("students")}>
-                        <i className="nc-icon nc-single-02"></i>
-                        <p>Students</p>
-                        </Link>
-                    </li>
-                    {/* <li className={(path == "/lessons" ? "active" : "")}>
-                        <a href="/lessons">
-                        <i className="nc-icon nc-money-coins"></i>
-                        <p>Lesson Plans</p>
-                        </a>
-                    </li> */}
-                    
-                </ul>
-                <div className="center text-center">
-                 <button className="btn btn-danger  btn-round" onClick={() => logout()}>Logout</button>
-
+            {/* Sidebar Navigation */}
+            <div className={`sidebar ${isMobileMenuOpen ? 'sidebar-open' : ''}`}>
+                <div className="sidebar-logo">
+                    <div className="sidebar-logo-icon">
+                        🚗
+                    </div>
+                    DRIVMA
                 </div>
-                
 
+                <div className="sidebar-nav">
+                    {navItems.map((item) => (
+                        <Link
+                            key={item.path}
+                            to={item.path}
+                            className={`nav-item ${currentPath === (item.path === '/' ? '/' : item.path.substring(1)) ? 'active' : ''}`}
+                            onClick={() => handleNavClick(item.path === '/' ? '/' : item.path.substring(1))}
+                        >
+                            <span>{item.icon}</span>
+                            <span>{item.label}</span>
+                        </Link>
+                    ))}
+                </div>
+
+                {/* Logout Button */}
+                <div className="sidebar-nav" style={{ marginTop: 'auto' }}>
+                    <button
+                        className="btn btn-danger w-full"
+                        onClick={() => {
+                            logout();
+                            setIsMobileMenuOpen(false);
+                        }}
+                    >
+                        <span>🚪</span>
+                        <span>Logout</span>
+                    </button>
+                </div>
             </div>
-        </div>
-        <div className="main-panel">
-        <nav className="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent">
-          <div className="container-fluid">
-            <div className="navbar-wrapper">
-              <div className="navbar-toggle">
-                <button type="button" className="navbar-toggler">
-                  <span className="navbar-toggler-bar bar1"></span>
-                  <span className="navbar-toggler-bar bar2"></span>
-                  <span className="navbar-toggler-bar bar3"></span>
-                </button>
-              </div> <a className="navbar-brand" href="#"><i class="fas fa-circle pr-2 text-success" color="green"></i> {driving_school}  {/*driving_school.toLowerCase().search("driving school") === -1 ? "Driving School" : "" */} </a>
+
+            {/* Main Content Area */}
+            <div className="main-content">
+                {/* Top Header */}
+                <div className="content-header">
+                    <div className="d-flex align-center">
+                        {/* Mobile Menu Toggle */}
+                        <button
+                            className="nav-toggle"
+                            onClick={handleMobileMenuToggle}
+                            aria-label="Toggle navigation"
+                        >
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M3 12h18M3 6h18M3 18h18"/>
+                            </svg>
+                        </button>
+
+                        {/* Driving School Name */}
+                        <div className="d-flex align-center gap-2">
+                            <span style={{ color: 'var(--color-success)', fontSize: '10px' }}>●</span>
+                            <h2 className="mb-0">{driving_school}</h2>
+                        </div>
+                    </div>
+
+                    {/* Desktop-only content */}
+                    <div className="desktop-only">
+                        <span style={{ color: 'var(--color-gray-500)', fontSize: 'var(--font-size-sm)' }}>
+                            Management Dashboard
+                        </span>
+                    </div>
+                </div>
             </div>
-            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-              <span className="navbar-toggler-bar navbar-kebab"></span>
-              <span className="navbar-toggler-bar navbar-kebab"></span>
-              <span className="navbar-toggler-bar navbar-kebab"></span>
-            </button>
-            
-            <div className="collapse navbar-collapse justify-content-end" id="navigation">
-              
-              
-            </div>
-          </div>
-        </nav>
-        </div>
-        
         </>
-    )
-}
+    );
+};
