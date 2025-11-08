@@ -290,6 +290,23 @@ body {
   margin-bottom: var(--space-4);
 }
 
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (max-width: 767px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .form-row .form-group {
+    margin-bottom: var(--space-4);
+  }
+}
+
 .form-label {
   display: block;
   font-weight: var(--font-weight-medium);
