@@ -28,7 +28,7 @@ export const Schedule = ({logout}) => {
     }, [])
 
     const getInstructorsFromServer = async (drivingSchoolId) => {
-        const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/instructors`, {
+        const res  = await fetch(`http://localhost:3000/api/instructors`, {
             method: 'GET',
             headers: {
                 'Content-type': 'application/json',
@@ -109,7 +109,7 @@ export const Schedule = ({logout}) => {
             instructor: theeInstruc.first_name + " " + theeInstruc.last_name
         }
 
-        const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/lessons/`, {
+        const res  = await fetch(`http://localhost:3000/api/lessons/`, {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json',
@@ -138,7 +138,7 @@ export const Schedule = ({logout}) => {
             getInstructorsFromServer(myCookie.get("userId"));
         }
 
-        const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/learners`, {
+        const res  = await fetch(`http://localhost:3000/api/learners`, {
             method: 'GET',
             headers: {
                 'Content-type': 'application/json',
@@ -197,7 +197,7 @@ export const Schedule = ({logout}) => {
     }
 
     const getLessons = async (id, learnerId) => {
-        const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/lessons`, {
+        const res  = await fetch(`http://localhost:3000/api/lessons`, {
             method: 'GET',
             headers: {
                 'Content-type': 'application/json',

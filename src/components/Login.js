@@ -11,7 +11,7 @@ const Login = ({signin}) => {
     var data = null;
     
     try{
-         res  = await fetch(`${process.env.REACT_APP_API_URL}/api/users`, {
+         res  = await fetch("http://localhost:3000/api/users", {
             method: 'GET',
             headers: {
                 'Content-type': 'application/json',
@@ -104,7 +104,7 @@ const Login = ({signin}) => {
     var data = null;
 
     setIsLoading(true);
-    res  = await fetch(`${process.env.REACT_APP_API_URL}/api/users`, {
+    res  = await fetch(`http://localhost:3000/api/users`, {
         method: 'GET',
         headers: {
             'Content-type': 'application/json',
@@ -120,7 +120,7 @@ const Login = ({signin}) => {
         return;
     }
 
-    res  = await fetch(`${process.env.REACT_APP_API_URL}/api/users`, {
+    res  = await fetch(`http://localhost:3000/api/users`, {
         method: 'POST' ,
         headers: {
             'Content-type': 'application/json',

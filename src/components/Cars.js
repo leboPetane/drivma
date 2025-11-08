@@ -23,7 +23,7 @@ export const Cars = ({logout}) => {
     }, [])
 
     const getInstructorsFromServer = async (drivingSchoolId) => {
-        const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/instructors`, {
+        const res  = await fetch(`http://localhost:3000/api/instructors`, {
             method: 'GET',
             headers: {
                 'Content-type': 'application/json',
@@ -39,7 +39,7 @@ export const Cars = ({logout}) => {
 
     const getCarsFromServer = async (drivingSchoolId) => {
         let tempCars = [];
-        const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/cars`, {
+        const res  = await fetch(`http://localhost:3000/api/cars`, {
             method: 'GET',
             headers: {
                 'Content-type': 'application/json',
@@ -113,7 +113,7 @@ export const Cars = ({logout}) => {
     }
 
     const removeCar = async (id) => {
-        const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/cars/${id}`, {
+        const res  = await fetch(`http://localhost:3000/api/cars/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-type': 'application/json',
@@ -182,7 +182,7 @@ export const Cars = ({logout}) => {
 
         const endpoint = (id === "" ? "" : "/" + focusedCar);
         
-        let res  = await fetch(`${process.env.REACT_APP_API_URL}/api/cars${endpoint}`, {
+        let res  = await fetch(`http://localhost:3000/api/cars${endpoint}`, {
             method: (id === "" ? 'POST' : 'PUT'),
             headers: {
                 'Content-type': 'application/json',
@@ -201,7 +201,7 @@ export const Cars = ({logout}) => {
                 training_car_id: cars[cars.length -1]._id
             }
 
-            let res  = await fetch(`${process.env.REACT_APP_API_URL}/api/instructors/${assignedDriver}`, {
+            let res  = await fetch(`http://localhost:3000/api/instructors/${assignedDriver}`, {
                 method: 'PUT',
                 headers: {
                     'Content-type': 'application/json',

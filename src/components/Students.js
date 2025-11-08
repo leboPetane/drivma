@@ -24,7 +24,7 @@ export const Students = ({logout}) => {
     }, [])
 
     const getInstructorsFromServer = async (id) => {
-        const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/instructors`, {
+        const res  = await fetch(`http://localhost:3000/api/instructors`, {
             method: 'GET',
             headers: {
                 'Content-type': 'application/json',
@@ -41,7 +41,7 @@ export const Students = ({logout}) => {
     }
 
     const getLearnersFromServer = async (id) => {
-        const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/learners`, {
+        const res  = await fetch(`http://localhost:3000/api/learners`, {
             method: 'GET',
             headers: {
                 'Content-type': 'application/json',
@@ -74,7 +74,7 @@ export const Students = ({logout}) => {
     const [isLoading,           setIsLoading] = useState(false)
         
     const removeLearner = async (id) => {
-        const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/learners/${id}`, {
+        const res  = await fetch(`http://localhost:3000/api/learners/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-type': 'application/json',
@@ -209,7 +209,7 @@ export const Students = ({logout}) => {
         
         const endpoint = (id === "" ? "" : "/" + focusedLearner);
         
-        let res  = await fetch(`${process.env.REACT_APP_API_URL}/api/learners${endpoint}`, {
+        let res  = await fetch(`http://localhost:3000/api/learners${endpoint}`, {
             method: (id === "" ? 'POST' : 'PUT'),
             headers: {
                 'Content-type': 'application/json',

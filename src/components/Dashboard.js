@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { Cookies } from "react-cookie";
 
 export const Dashboard = ({instruct, logout}) => {
-
+  
+  let REACT_APP_API_URL = process.env.REACT_APP_API_URL;
+  REACT_APP_API_URL  = (REACT_APP_API_URL == "" ? "http://localhost:3000" : REACT_APP_API_URL);
+  
   useEffect(() => {
     let cookie =  new Cookies();
     if(cookie.get("userId") === undefined || cookie.get("UserLoggedIn") === undefined) logout();
@@ -17,7 +20,7 @@ export const Dashboard = ({instruct, logout}) => {
   }, [])
 
   const getInstructorsFromServer = async (drivingSchoolId) => {
-    const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/instructors`, {
+    const res  = await fetch(`http://localhost:3000/api/instructors`, {
       method: 'GET',
       headers: {
           'Content-type': 'application/json',
@@ -90,7 +93,7 @@ export const Dashboard = ({instruct, logout}) => {
   }
 
   const getLessonsFromServer = async (id) => {
-    const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/lessons`, {
+    const res  = await fetch(`http://localhost:3000/api/lessons`, {
       method: 'GET',
       headers: {
           'Content-type': 'application/json',
@@ -149,7 +152,7 @@ export const Dashboard = ({instruct, logout}) => {
       let res = null;
       let data = null;
 
-      res  = await fetch(`${process.env.REACT_APP_API_URL}/api/instructors`, {
+      res  = await fetch(`http://localhost:3000/api/instructors`, {
           method: 'GET',
           headers: {
               'Content-type': 'application/json',
@@ -162,7 +165,7 @@ export const Dashboard = ({instruct, logout}) => {
 
       if (!user){ 
         //console.log("not a duplicate so i can just go ahead...")
-        res  = await fetch(`${process.env.REACT_APP_API_URL}/api/instructors/`, {
+        res  = await fetch(`http://localhost:3000/api/instructors/`, {
           method: 'POST',
           headers: {
               'Content-type': 'application/json',
@@ -186,7 +189,7 @@ export const Dashboard = ({instruct, logout}) => {
 
     
 
-    const res  = await fetch(`${process.env.REACT_APP_API_URL}/api/instructors/${id}`, {
+    const res  = await fetch(`http://localhost:3000/api/instructors/${id}`, {
       method: 'PUT',
       headers: {
           'Content-type': 'application/json',

@@ -15,7 +15,7 @@ export const MySchedule = () => {
   const seeSchedule = async (e) => {
       e.preventDefault();
       setIsLoading(true);
-      var res  = await fetch(`${process.env.REACT_APP_API_URL}/api/instructors`, {
+      var res  = await fetch(`http://localhost:3000/api/instructors`, {
         method: 'GET',
         headers: {
             'Content-type': 'application/json',
@@ -34,7 +34,7 @@ export const MySchedule = () => {
     setFirstName(instructor.first_name);
     setLastName(instructor.last_name);
 
-    res  = await fetch(`${process.env.REACT_APP_API_URL}/api/lessons`, {
+    res  = await fetch(`http://localhost:3000/api/lessons`, {
         method: 'GET',
         headers: {
             'Content-type': 'application/json',
