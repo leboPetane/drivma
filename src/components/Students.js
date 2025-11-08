@@ -231,118 +231,348 @@ export const Students = ({logout}) => {
     }
 
     return (
-        <div>
-            <div>
-                <button className="btn btn-default btn-round" onClick={(e) => addCar()}>+ Add New</button>
+        <div className="content-section">
+            <div className="d-flex justify-between align-center mb-6">
+                <h3 style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'var(--font-weight-semibold)', margin: 0 }}>
+                    👨‍🎓 Student Management
+                </h3>
+                <button
+                    className="btn btn-primary"
+                    onClick={addCar}
+                >
+                    <span>➕</span>
+                    <span>Add Student</span>
+                </button>
             </div>
-            <div className="table-responsive">
-                <table className="table">
-                   <thead className=" text-primary">
-                       <tr>
-                            <th> Name </th>
-                            <th> Address </th>
-                            <th> Area </th>
-                            <th> Mobile </th>
-                            <th> Email </th>
-                            <th> Car </th>
-                            <th> Instructor </th>
-                            <th> Test Date </th>
-                            <th>  </th>
-                            <th>  </th>
-                       </tr>
-                    </thead>
-                    <tbody>
-                        {learners.map((learner) => 
-                        <tr key={learner._id}>
-                            <td> {learner.first_name + " " + learner.last_name} </td>
-                            <td> {learner.address} </td>
-                            <td> {learner.area} </td>
-                            <td> {learner.mobile} </td>
-                            <td> {learner.email} </td>
-                            <td> {learner.car_name}</td>
-                            <td> {learner.driver_name} </td>
-                            <td> {learner.test_date} </td>
-                            <td> <button className="btn btn-sm btn-outline-danger" onClick={() => removeLearner(learner._id)}>remove</button> </td>
-                            <td> <button className="btn btn-sm btn-outline-success btn-round btn-icon " onClick={() => focusLearner(learner._id)} ><i className="nc-icon nc-settings-gear-65"></i></button> </td>
-                        </tr>)}
-                     
-                    </tbody>
-                </table>
-            </div>
-            {memberForm && 
-            <div className = "row card">
-                <div className="col-md-12">
-                    {(errMsg !== "") && <p className="alert-danger p-2">{errMsg}</p>}
-                    <div className="card-body">
-                    <form>
-                        <div className="row">
-                            <div className="col-md-4 pr-1">
-                                <div className="form-group">
-                                    <label>First Name</label>
-                                    <input type="text" className="form-control" disabled="" value={firstName} onChange={(e) => setFirstName(e.target.value)}></input>
-                                </div>
-                            </div>
-                            <div className="col-md-4 px-1">
-                                <div className="form-group">
-                                    <label>Last Name</label>
-                                    <input type="text" className="form-control"  value={lastName} onChange={(e) => setLastName(e.target.value)}></input>
-                                </div>
-                            </div>
-                            <div className="col-md-4 pl-1">
-                                <div className="form-group">
-                                    <label >Area</label>
-                                    <input type="text" className="form-control" value={area} onChange={(e) => setArea(e.target.value)}></input>
-                                </div>
-                            </div>
+
+            {learners.length > 0 ? (
+                <div className="table-responsive">
+                    <table className="table-modern">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Contact Info</th>
+                                <th>Address</th>
+                                <th>Area</th>
+                                <th>Instructor</th>
+                                <th>Test Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {learners.map((learner) => (
+                                <tr key={learner._id}>
+                                    <td>
+                                        <div style={{ display: 'flex', align: 'center', gap: 'var(--space-2)' }}>
+                                            <span style={{ fontSize: '1.2rem' }}>👨‍🎓</span>
+                                            <div>
+                                                <div style={{ fontWeight: 'var(--font-weight-medium)' }}>
+                                                    {learner.first_name} {learner.last_name}
+                                                </div>
+                                                {learner.car_name && (
+                                                    <span className="badge badge-secondary" style={{ fontSize: 'var(--font-size-xs)' }}>
+                                                        🚗 {learner.car_name}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <div style={{ fontSize: 'var(--font-size-sm)', marginBottom: 'var(--space-1)' }}>
+                                                📧 {learner.email}
+                                            </div>
+                                            <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-gray-600)' }}>
+                                                📱 {learner.mobile}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style={{ fontSize: 'var(--font-size-sm)', maxWidth: '200px', wordBreak: 'break-word' }}>
+                                            📍 {learner.address}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span className="badge badge-info">{learner.area}</span>
+                                    </td>
+                                    <td>
+                                        {learner.driver_name ? (
+                                            <div>
+                                                <div style={{ fontWeight: 'var(--font-weight-medium)', fontSize: 'var(--font-size-sm)' }}>
+                                                    👨‍🏫 {learner.driver_name}
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <span style={{ color: 'var(--color-gray-400)', fontSize: 'var(--font-size-sm)' }}>Not assigned</span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        {learner.test_date ? (
+                                            <span className={`badge ${isTestDateSoon(learner.test_date) ? 'badge-warning' : 'badge-success'}`}>
+                                                📅 {learner.test_date}
+                                            </span>
+                                        ) : (
+                                            <span style={{ color: 'var(--color-gray-400)', fontSize: 'var(--font-size-sm)' }}>Not set</span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                                            <button
+                                                className="btn btn-outline btn-sm"
+                                                onClick={() => focusLearner(learner._id)}
+                                                title="Edit student"
+                                            >
+                                                ⚙️
+                                            </button>
+                                            <button
+                                                className="btn btn-danger btn-sm"
+                                                onClick={() => {
+                                                    if (window.confirm(`Are you sure you want to remove ${learner.first_name} ${learner.last_name}?`)) {
+                                                        removeLearner(learner._id);
+                                                    }
+                                                }}
+                                                title="Remove student"
+                                            >
+                                                🗑️
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            ) : (
+                <div style={{ textAlign: 'center', padding: 'var(--space-8)', color: 'var(--color-gray-500)' }}>
+                    <div style={{ fontSize: '3rem', marginBottom: 'var(--space-4)' }}>👨‍🎓</div>
+                    <h4 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-medium)', marginBottom: 'var(--space-2)' }}>
+                        No students enrolled yet
+                    </h4>
+                    <p style={{ fontSize: 'var(--font-size-sm)', marginBottom: 'var(--space-4)' }}>
+                        Add your first student to start managing their driving lessons and progress.
+                    </p>
+                    <button
+                        className="btn btn-primary"
+                        onClick={addCar}
+                    >
+                        <span>➕</span>
+                        <span>Add First Student</span>
+                    </button>
+                </div>
+            )}
+
+            {/* Student Form */}
+            {memberForm && (
+                <div className="content-section" style={{ marginTop: 'var(--space-6)' }}>
+                    <div className="card">
+                        <div className="card-header">
+                            <h3 className="card-title">
+                                {focusedLearner ? 'Edit Student' : 'Add New Student'}
+                            </h3>
                         </div>
-                        <div className="row">
-                            <div className="col-md-6 pr-1">
-                                <div className="form-group">
-                                    <label>Mobile</label>
-                                    <input type="text" className="form-control" value={mobile} onChange={(e) => setMobile(e.target.value)}></input>
+                        <div className="card-body">
+                            {errMsg && (
+                                <div className="alert alert-error">
+                                    {errMsg}
                                 </div>
-                            </div>
-                            <div className="col-md-6 pl-1">
-                                <div className="form-group">
-                                    <label>Email</label>
-                                    <input type="text" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)}></input>
+                            )}
+
+                            <form>
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label className="form-label">First Name</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={firstName}
+                                            onChange={(e) => setFirstName(e.target.value)}
+                                            placeholder="First name"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Last Name</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={lastName}
+                                            onChange={(e) => setLastName(e.target.value)}
+                                            placeholder="Last name"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Area</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={area}
+                                            onChange={(e) => setArea(e.target.value)}
+                                            placeholder="Service area"
+                                            required
+                                        />
+                                    </div>
                                 </div>
-                            </div>
+
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label className="form-label">Mobile Number</label>
+                                        <input
+                                            type="tel"
+                                            className="form-control"
+                                            value={mobile}
+                                            onChange={(e) => setMobile(e.target.value)}
+                                            placeholder="Mobile number"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Email Address</label>
+                                        <input
+                                            type="email"
+                                            className="form-control"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            placeholder="Email address"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Address</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={address}
+                                        onChange={(e) => setAddress(e.target.value)}
+                                        placeholder="Full address"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label className="form-label">Assign to Instructor</label>
+                                        <select
+                                            className="form-control"
+                                            value={instructor}
+                                            onChange={(e) => setInstructor(e.target.value)}
+                                            required
+                                        >
+                                            <option value="0">Select Instructor</option>
+                                            {instructors.map((instructor) => (
+                                                <option key={instructor._id} value={instructor._id}>
+                                                    {instructor.first_name} {instructor.last_name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Test Date</label>
+                                        <input
+                                            type="date"
+                                            className="form-control"
+                                            value={testDate}
+                                            onChange={(e) => setTestDate(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="d-flex gap-4 justify-end">
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline"
+                                        onClick={() => {
+                                            setMemberForm(false);
+                                            setFocusedLearner("");
+                                            setFirstName("");
+                                            setLastName("");
+                                            setAddress("");
+                                            setArea("");
+                                            setMobile("");
+                                            setEmail("");
+                                            setCar("");
+                                            setInstructor("");
+                                            setTestDate("");
+                                            setErrMsg("");
+                                        }}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            saveLearner(focusedLearner);
+                                        }}
+                                        disabled={isLoading}
+                                    >
+                                        {isLoading ? <span className="btn-loading"></span> : (focusedLearner ? 'Update Student' : 'Add Student')}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                        <div className="row">
-                            <div className="col-md-12">
-                                <div className='form-group'>
-                                    <label>Address</label>
-                                    <input type="text" className="form-control" value={address} onChange={(e) => setAddress(e.target.value)}></input>
-                                </div>
-                            </div>
-                            <div className="col-md-12">
-                                <div className="form-group">
-                                    <label>Instructor</label>
-                                    <select className="form-group form-control" value={instructor} onChange={(e) => setInstructor(e.target.value)}>
-                                        <option value="0">
-                                         {"<Select Instructor>"}
-                                        </option>
-                                        {instructors.map((obj) => <option key={obj._id} value={obj._id}>{obj.first_name + " " + obj.last_name}</option>)}
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="col-md-12">
-                                <div className="form-group">
-                                    <label>Test Date</label>
-                                    <input type="date" className="form-control" value={testDate} onChange={(e) => setTestDate(e.target.value)}></input>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="row">
-                                <div className="update ml-auto mr-auto">
-                                <button type="submit" className="btn btn-primary btn-round" onClick={(e) => {e.preventDefault(); saveLearner(focusedLearner)}} disabled={isLoading}>Save Learner</button>
-                                </div>
-                         </div>
-                        </form>
                     </div>
                 </div>
-            </div> }
+            )}
+
+            {/* Student Statistics */}
+            {learners.length > 0 && (
+                <div className="content-section" style={{ marginTop: 'var(--space-6)' }}>
+                    <div className="stats-grid">
+                        <div className="card" style={{ textAlign: 'center' }}>
+                            <div className="card-body">
+                                <div style={{ fontSize: '2rem', marginBottom: 'var(--space-2)' }}>👨‍🎓</div>
+                                <h4 style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'var(--font-weight-bold)', margin: '0 0 var(--space-1) 0' }}>
+                                    {learners.length}
+                                </h4>
+                                <p style={{ margin: 0, color: 'var(--color-gray-600)', fontSize: 'var(--font-size-sm)' }}>
+                                    Total Students
+                                </p>
+                            </div>
+                        </div>
+                        <div className="card" style={{ textAlign: 'center' }}>
+                            <div className="card-body">
+                                <div style={{ fontSize: '2rem', marginBottom: 'var(--space-2)' }}>👨‍🏫</div>
+                                <h4 style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'var(--font-weight-bold)', margin: '0 0 var(--space-1) 0' }}>
+                                    {new Set(learners.map(l => l.instructor_id)).size}
+                                </h4>
+                                <p style={{ margin: 0, color: 'var(--color-gray-600)', fontSize: 'var(--font-size-sm)' }}>
+                                    Active Instructors
+                                </p>
+                            </div>
+                        </div>
+                        <div className="card" style={{ textAlign: 'center' }}>
+                            <div className="card-body">
+                                <div style={{ fontSize: '2rem', marginBottom: 'var(--space-2)' }}>📅</div>
+                                <h4 style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'var(--font-weight-bold)', margin: '0 0 var(--space-1) 0' }}>
+                                    {learners.filter(learner => isTestDateSoon(learner.test_date)).length}
+                                </h4>
+                                <p style={{ margin: 0, color: 'var(--color-gray-600)', fontSize: 'var(--font-size-sm)' }}>
+                                    Tests Soon
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
+
+    // Helper function to check if test date is within 14 days
+    function isTestDateSoon(testDate) {
+        if (!testDate) return false;
+
+        try {
+            const test = new Date(testDate);
+            const today = new Date();
+            const fourteenDaysFromNow = new Date(today.getTime() + (14 * 24 * 60 * 60 * 1000));
+
+            return test <= fourteenDaysFromNow && test >= today;
+        } catch (error) {
+            return false;
+        }
+    }
 }
