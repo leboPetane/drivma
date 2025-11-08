@@ -204,158 +204,280 @@ export const Dashboard = ({instruct, logout}) => {
   }
 
     return (
-        <>
-        
-        <div className = "row">
-          
-          {(focusInstructor && !newInstructor) &&
-            <div className = "col-md-4">
-                <div className="card card-user">
-                <div className="image">
-                    
-                </div>
-                <div className="card-body">
-                    <div className="author">
-                    <a href="#">
-                        <h5 className="title">{firstName + " " + lastName}</h5>
-                    </a>
-                    <p className="description">
-                    {instructorArea}  
+        <div className="content-section">
+          <div className="content-grid">
+            {/* Instructor Details Sidebar */}
+            {(focusInstructor && !newInstructor) && (
+              <div className="content-section">
+                <div className="card">
+                  <div className="card-header">
+                    <h3 className="card-title">{firstName} {lastName}</h3>
+                    <p className="text-muted" style={{ margin: 'var(--space-1) 0 0 0', fontSize: 'var(--font-size-sm)' }}>
+                      📍 {instructorArea}
                     </p>
-                    </div>
-                    <table className="table">
-                   <thead className=" text-primary">
-                       <tr>
-                            <th> Time        </th>
-                            <th> Description </th>
-                            {/* <th>       </th> */}
-                       </tr>
-                    </thead>
-                    <tbody>
-                      {schedules.map((lesson) => 
-                        <tr key={lesson._id}>
-                          <th> {lesson.time}:00 </th>
-                          <td>  {true ? <p> Lesson with {lesson.learner} <span className='badge badge-warning'> {lesson.area} </span></p> : ""}  </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
+                  </div>
+                  <div className="card-body">
+                    <h4 style={{ fontSize: 'var(--font-size-base)', fontWeight: 'var(--font-weight-semibold)', marginBottom: 'var(--space-4)' }}>
+                      Today's Schedule
+                    </h4>
+                    {schedules.length > 0 ? (
+                      <div className="space-y-2">
+                        {schedules.map((lesson) => (
+                          <div key={lesson._id} className="d-flex align-center justify-between p-3" style={{ background: 'var(--color-gray-50)', borderRadius: 'var(--border-radius-sm)' }}>
+                            <div>
+                              <div style={{ fontWeight: 'var(--font-weight-medium)', fontSize: 'var(--font-size-sm)' }}>
+                                {lesson.time}:00
+                              </div>
+                              <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-gray-600)', marginTop: 'var(--space-1)' }}>
+                                Lesson with {lesson.learner}
+                              </div>
+                            </div>
+                            <span className="badge badge-warning">{lesson.area}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p style={{ color: 'var(--color-gray-500)', fontSize: 'var(--font-size-sm)', textAlign: 'center', padding: 'var(--space-4)' }}>
+                        No lessons scheduled for today
+                      </p>
+                    )}
+                  </div>
                 </div>
-                
+              </div>
+            )}
+
+            {/* Main Instructor List */}
+            <div>
+              <div className="content-section">
+                <div className="d-flex justify-between align-center mb-4">
+                  <h3 style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'var(--font-weight-semibold)', margin: 0 }}>
+                    Instructors
+                  </h3>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => addTrainer()}
+                  >
+                    <span>➕</span>
+                    <span>Add Instructor</span>
+                  </button>
                 </div>
-            </div>}
-          
-            <div className={(focusInstructor && !newInstructor) ? "col-md-8" : "col-md-12"}>
-              <div className="card">
-             <div className="table-responsive">
 
-             <div className="p-5">
-              <button className="btn btn-primary btn-round" onClick={() => addTrainer()}>+ Toggle Add Trainer</button>
-              <p className='m-0 p-0 text-info text-center'>Your instructor can use their email and passcode to check their daily schedule by visiting {window.location.href + "myschedule"}</p>
+                <div style={{ background: 'var(--color-info)', border: '1px solid var(--color-primary)', borderRadius: 'var(--border-radius-sm)', padding: 'var(--space-3)', marginBottom: 'var(--space-4)' }}>
+                  <p style={{ margin: 0, fontSize: 'var(--font-size-sm)', color: 'var(--color-primary)' }}>
+                    <strong>Instructor Portal:</strong> Instructors can check their daily schedule at {window.location.href}myschedule using their email and passcode.
+                  </p>
+                </div>
 
-               </div>
-                 <table className="table">
-                    <thead className=" text-primary">
+                {instructors.length > 0 ? (
+                  <div className="table-responsive">
+                    <table className="table-modern">
+                      <thead>
                         <tr>
-                             <th> Name </th>
-                             <th> area </th>
-                             <th> Mobile </th>
-                             <th> Training Car </th>
-                             <th>  </th>
+                          <th>Name</th>
+                          <th>Area</th>
+                          <th>Mobile</th>
+                          <th>Training Car</th>
+                          <th>Actions</th>
                         </tr>
-                     </thead>
-                     <tbody>
-                       {instructors.length > 0 &&
-                       instructors.map((inst) => 
-                         <tr key={inst._id}>
-                           <td> {inst.first_name + " " + inst.last_name} </td>
-                           <td> {inst.area}   </td>
-                           <td> {inst.mobile} </td>
-                           <td> {inst.training_car}    </td>
-                           <td> 
-                               <button className="btn btn-sm btn-outline-success btn-round btn-icon" onClick={() => toggleFocus(inst._id)}><i className="nc-icon nc-settings-gear-65"></i></button>
-                           </td>
-                         </tr>
-                       )
-                      }
-                     </tbody>
-                 </table>
-             </div>
-         </div>
-         {focusInstructor &&
-            <div className="card card-user">
-              <div className="card-header">
-                <h5 className="card-title">{(focusInstructor && !newInstructor) ? "Edit Profile" : "Add Instructor"}</h5>
-                {(errMsg !== "") && <p className="alert-danger p-2">{errMsg}</p>}
+                      </thead>
+                      <tbody>
+                        {instructors.map((inst) => (
+                          <tr key={inst._id}>
+                            <td>
+                              <div style={{ fontWeight: 'var(--font-weight-medium)' }}>
+                                {inst.first_name} {inst.last_name}
+                              </div>
+                            </td>
+                            <td>{inst.area}</td>
+                            <td>{inst.mobile}</td>
+                            <td>
+                              {inst.training_car ? (
+                                <span className="badge badge-secondary">{inst.training_car}</span>
+                              ) : (
+                                <span style={{ color: 'var(--color-gray-400)', fontSize: 'var(--font-size-sm)' }}>Not assigned</span>
+                              )}
+                            </td>
+                            <td>
+                              <button
+                                className="btn btn-outline btn-sm"
+                                onClick={() => toggleFocus(inst._id)}
+                                title="Edit instructor"
+                              >
+                                ⚙️
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div style={{ textAlign: 'center', padding: 'var(--space-8)', color: 'var(--color-gray-500)' }}>
+                    <div style={{ fontSize: '3rem', marginBottom: 'var(--space-4)' }}>👥</div>
+                    <h4 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-medium)', marginBottom: 'var(--space-2)' }}>
+                      No instructors yet
+                    </h4>
+                    <p style={{ fontSize: 'var(--font-size-sm)', marginBottom: 'var(--space-4)' }}>
+                      Add your first instructor to get started with managing your driving school.
+                    </p>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => addTrainer()}
+                    >
+                      <span>➕</span>
+                      <span>Add First Instructor</span>
+                    </button>
+                  </div>
+                )}
               </div>
-              <div className="card-body">
-                <form>
-                  <div className="row">
-                    <div className="col-md-4 pr-1">
-                      <div className="form-group">
-                        <label>Mobile Number</label>
-                        <input type="text" className="form-control" disabled="" value={mobileNumber} onChange={(e) => setMobileNumber(e.target.value)}></input>
-                      </div>
-                    </div>
-                    <div className="col-md-4 px-1">
-                      <div className="form-group">
-                        <label>Email</label>
-                        <input type="text" className="form-control" value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)}></input>
-                      </div>
-                    </div>
-                    <div className="col-md-4 pl-1">
-                      <div className="form-group">
-                        <label htmlFor="exampleInputEmail1">Passcode</label>
-                        <input type="email" className="form-control" value={instructorPasscode} onChange={(e) => setPasscode(e.target.value)}></input>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-md-6 pr-1">
-                      <div className="form-group">
-                        <label>First Name</label>
-                        <input type="text" className="form-control" value={firstName} onChange={(e) => setFirstName(e.target.value)}></input>
-                      </div>
-                    </div>
-                    <div className="col-md-6 pl-1">
-                      <div className="form-group">
-                        <label>Last Name</label>
-                        <input type="text" className="form-control" value={lastName} onChange={(e) => setLastName(e.target.value)}></input>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="row">
-                  <div className="col-md-12">
-                      <div className="form-group">
-                        <label>Training Car</label>
-                        <input type="text" className="form-control" disabled value={trainingCar} onChange={(e) => setTrainingCar(e.target.value)}></input>
-                      </div>
 
+              {/* Instructor Form */}
+              {focusInstructor && (
+                <div className="content-section" style={{ marginTop: 'var(--space-6)' }}>
+                  <div className="card">
+                    <div className="card-header">
+                      <h3 className="card-title">
+                        {newInstructor ? 'Add New Instructor' : 'Edit Instructor Profile'}
+                      </h3>
                     </div>
-                    <div className="col-md-12 pr-1">
-                      <div className="form-group">
-                        <label>Area</label>
-                        <input type="text" className="form-control" value={instructorArea} onChange={(e) => setArea(e.target.value)}></input>
-                      </div>
-                    </div>
-                    <div className="col-md-12">
-                      <div className="form-group">
-                        <label>Address</label>
-                        <input type="text" className="form-control" value={instructorAddress} onChange={(e) => setAddress(e.target.value)}></input>
-                      </div>
+                    <div className="card-body">
+                      {errMsg && (
+                        <div className="alert alert-error">
+                          {errMsg}
+                        </div>
+                      )}
+
+                      <form>
+                        <div className="form-row">
+                          <div className="form-group">
+                            <label className="form-label">First Name</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={firstName}
+                              onChange={(e) => setFirstName(e.target.value)}
+                              placeholder="First name"
+                              required
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label className="form-label">Last Name</label>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={lastName}
+                              onChange={(e) => setLastName(e.target.value)}
+                              placeholder="Last name"
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        <div className="form-row">
+                          <div className="form-group">
+                            <label className="form-label">Email Address</label>
+                            <input
+                              type="email"
+                              className="form-control"
+                              value={emailAddress}
+                              onChange={(e) => setEmailAddress(e.target.value)}
+                              placeholder="Email address"
+                              required
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label className="form-label">Mobile Number</label>
+                            <input
+                              type="tel"
+                              className="form-control"
+                              value={mobileNumber}
+                              onChange={(e) => setMobileNumber(e.target.value)}
+                              placeholder="Mobile number"
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        <div className="form-group">
+                          <label className="form-label">Passcode</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={instructorPasscode}
+                            onChange={(e) => setPasscode(e.target.value)}
+                            placeholder="Instructor passcode"
+                            required
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label className="form-label">Area</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={instructorArea}
+                            onChange={(e) => setArea(e.target.value)}
+                            placeholder="Service area"
+                            required
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label className="form-label">Address</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={instructorAddress}
+                            onChange={(e) => setAddress(e.target.value)}
+                            placeholder="Full address"
+                            required
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label className="form-label">Training Car</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={trainingCar}
+                            onChange={(e) => setTrainingCar(e.target.value)}
+                            placeholder="Assigned training car"
+                            disabled
+                            style={{ background: 'var(--color-gray-50)' }}
+                          />
+                        </div>
+
+                        <div className="d-flex gap-4 justify-end">
+                          <button
+                            type="button"
+                            className="btn btn-outline"
+                            onClick={() => {
+                              setFocusInstructor(false);
+                              setNewInstructor(false);
+                              setErrMsg("");
+                            }}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            className="btn btn-primary"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              saveInstructor(instructorId);
+                            }}
+                            disabled={isLoading}
+                          >
+                            {isLoading ? <span className="btn-loading"></span> : (newInstructor ? 'Add Instructor' : 'Save Changes')}
+                          </button>
+                        </div>
+                      </form>
                     </div>
                   </div>
-                  <div className="row">
-                    <div className="update ml-auto mr-auto">
-                      <button type="submit" className="btn btn-primary btn-round" onClick={(e) => {e.preventDefault();saveInstructor(instructorId)} } disabled={isLoading}>Save Profile</button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>}
+                </div>
+              )}
+            </div>
           </div>
         </div>
-     
-        </>
     )
 }
