@@ -216,94 +216,276 @@ export const Cars = ({logout}) => {
 
     }
     return (
-        <div>
-            <div className="card">
-                <div className="table-responsive pl-3">
-                <button className="btn btn-primary btn-round" onClick={() => addCar()}>+ Toggle Add Car</button>
+        <div className="content-section">
+            <div className="d-flex justify-between align-center mb-6">
+                <h3 style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'var(--font-weight-semibold)', margin: 0 }}>
+                    🚗 Vehicle Management
+                </h3>
+                <button
+                    className="btn btn-primary"
+                    onClick={() => addCar()}
+                >
+                    <span>➕</span>
+                    <span>Add Vehicle</span>
+                </button>
+            </div>
 
-                    <table className="table">
-                        <thead className="text-primary">
+            {cars.length > 0 ? (
+                <div className="table-responsive">
+                    <table className="table-modern">
+                        <thead>
                             <tr>
-                                <th> Car Name </th>
-                                <th> Model Year </th>
-                                <th> Expiry Date </th>
-                                <th> Assigned Driver </th>
-                                <th>  </th>
-                                <th>  </th>
+                                <th>Vehicle Name</th>
+                                <th>Model Year</th>
+                                <th>Disc Expiry</th>
+                                <th>Assigned Instructor</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                        {
-                            cars.map((car) => 
-                                <tr key={car._id} className="col-md-12 mb-3">
-                                    <td className="card-title">{car.name} </td>
-                                    <td>{car.year}</td>
-                                    <td>{car.disc_expiry}</td>
-                                    <td>{car.driver}</td>
-                                    <td> <button className="btn btn-small btn-outline-danger" onClick={() => removeCar(car._id)}>remove</button> </td>
-                                    <td> <button className="btn btn-sm btn-outline-success btn-round btn-icon" onClick={() => focusOnCar(car._id)}><i className="nc-icon nc-settings-gear-65"></i></button> 
+                            {cars.map((car) => (
+                                <tr key={car._id}>
+                                    <td>
+                                        <div style={{ display: 'flex', align: 'center', gap: 'var(--space-2)' }}>
+                                            <span style={{ fontSize: '1.2rem' }}>🚗</span>
+                                            <div>
+                                                <div style={{ fontWeight: 'var(--font-weight-medium)' }}>{car.name}</div>
+                                                {car.serviced && (
+                                                    <span className="badge badge-success" style={{ fontSize: 'var(--font-size-xs)' }}>Serviced</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span className="badge badge-secondary">{car.year}</span>
+                                    </td>
+                                    <td>
+                                        {car.disc_expiry ? (
+                                            <span className={`badge ${isExpirySoon(car.disc_expiry) ? 'badge-warning' : 'badge-info'}`}>
+                                                📅 {car.disc_expiry}
+                                            </span>
+                                        ) : (
+                                            <span style={{ color: 'var(--color-gray-400)', fontSize: 'var(--font-size-sm)' }}>Not set</span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        {car.driver ? (
+                                            <div>
+                                                <div style={{ fontWeight: 'var(--font-weight-medium)', fontSize: 'var(--font-size-sm)' }}>
+                                                    👤 {car.driver}
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <span style={{ color: 'var(--color-gray-400)', fontSize: 'var(--font-size-sm)' }}>Unassigned</span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                                            <button
+                                                className="btn btn-outline btn-sm"
+                                                onClick={() => focusOnCar(car._id)}
+                                                title="Edit vehicle"
+                                            >
+                                                ⚙️
+                                            </button>
+                                            <button
+                                                className="btn btn-danger btn-sm"
+                                                onClick={() => {
+                                                    if (window.confirm(`Are you sure you want to remove ${car.name}?`)) {
+                                                        removeCar(car._id);
+                                                    }
+                                                }}
+                                                title="Remove vehicle"
+                                            >
+                                                🗑️
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
-                            )
-                        }
+                            ))}
                         </tbody>
                     </table>
                 </div>
-            </div>
-            <div className="col-md-12">
-                {isFocused &&
-                <div className="card card-user">
-                    <div className="card-header">
-                        {/* <h5 className="card-title">Add Car</h5> */}
-                        {(errMsg !== "") && <p className="alert-danger p-2">{errMsg}</p>}
+            ) : (
+                <div style={{ textAlign: 'center', padding: 'var(--space-8)', color: 'var(--color-gray-500)' }}>
+                    <div style={{ fontSize: '3rem', marginBottom: 'var(--space-4)' }}>🚗</div>
+                    <h4 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-medium)', marginBottom: 'var(--space-2)' }}>
+                        No vehicles in your fleet
+                    </h4>
+                    <p style={{ fontSize: 'var(--font-size-sm)', marginBottom: 'var(--space-4)' }}>
+                        Add your first vehicle to start managing your driving school fleet.
+                    </p>
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => addCar()}
+                    >
+                        <span>➕</span>
+                        <span>Add First Vehicle</span>
+                    </button>
+                </div>
+            )}
 
-                    </div>  
-                    <div className="card-body">
-                        <form>
-                            <div className="row">
-                                <div className="col-md-6 pr-1">
+            {isFocused && (
+                <div className="content-section" style={{ marginTop: 'var(--space-6)' }}>
+                    <div className="card">
+                        <div className="card-header">
+                            <h3 className="card-title">
+                                {focusedCar ? 'Edit Vehicle' : 'Add New Vehicle'}
+                            </h3>
+                        </div>
+                        <div className="card-body">
+                            {errMsg && (
+                                <div className="alert alert-error">
+                                    {errMsg}
+                                </div>
+                            )}
+
+                            <form>
+                                <div className="form-row">
                                     <div className="form-group">
-                                        <label>Car Name</label>
-                                        <input type="text" className="form-control" value={carName} onChange={(e) => setCarName(e.target.value)}></input>
+                                        <label className="form-label">Vehicle Name</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={carName}
+                                            onChange={(e) => setCarName(e.target.value)}
+                                            placeholder="e.g., Toyota Corolla"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Model Year</label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            value={carYear}
+                                            onChange={(e) => setCarYear(parseInt(e.target.value) || 2000)}
+                                            min="1900"
+                                            max="2030"
+                                            required
+                                        />
                                     </div>
                                 </div>
-                                <div className="col-md-6 pl-1">
+
+                                <div className="form-row">
                                     <div className="form-group">
-                                        <label htlmfor="exampleInputEmail1">Year</label>
-                                        <input type="number" className="form-control" value={carYear} onChange={(e) => setCarYear(e.target.value)}></input>
+                                        <label className="form-label">Disc Expiry Date</label>
+                                        <input
+                                            type="date"
+                                            className="form-control"
+                                            value={carExpiry}
+                                            onChange={(e) => changeCarExpiry(e.target.value)}
+                                            required
+                                        />
                                     </div>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-md-6 pr-1">
                                     <div className="form-group">
-                                        <label>Disc Expiry Date</label>
-                                        <input type="date" className="form-control" value={carExpiry} onChange={(e) => changeCarExpiry(e.target.value)}></input>
-                                    </div>
-                                </div>
-                                <div className="col-md-6 pl-1">
-                                <div className="form-group">
-                                        <label>Assign To Driver</label>
-                                        <select className="form-group form-control" value={assignedDriver} onChange={(e) => setAssignedDriver(e.target.value)}>
-                                            <option>
-                                                {"<Select Car>"}
-                                            </option>
-                                            {
-                                                instructors.map((obj) => <option value={obj._id} key={obj._id}>{obj.first_name + " " + obj.last_name}</option>)
-                                            }
+                                        <label className="form-label">Assign to Instructor</label>
+                                        <select
+                                            className="form-control"
+                                            value={assignedDriver}
+                                            onChange={(e) => setAssignedDriver(e.target.value)}
+                                            required
+                                        >
+                                            <option value="0">Select Instructor</option>
+                                            {instructors.map((instructor) => (
+                                                <option key={instructor._id} value={instructor._id}>
+                                                    {instructor.first_name} {instructor.last_name}
+                                                </option>
+                                            ))}
                                         </select>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="row">
-                                <div className="update ml-auto mr-auto">
-                                <button className="btn btn-primary btn-round" onClick={(e) => {e.preventDefault(); saveCar(focusedCar)}} disabled={isLoading}>Save Car</button>
+
+                                <div className="d-flex gap-4 justify-end">
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline"
+                                        onClick={() => {
+                                            setIsFocused(false);
+                                            setFocusedCar("");
+                                            setErrMsg("");
+                                            setCarName("");
+                                            setCarYear(2000);
+                                            setCarExpiry("");
+                                            setAssignedDriver("0");
+                                        }}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            saveCar(focusedCar);
+                                        }}
+                                        disabled={isLoading}
+                                    >
+                                        {isLoading ? <span className="btn-loading"></span> : (focusedCar ? 'Update Vehicle' : 'Add Vehicle')}
+                                    </button>
                                 </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Fleet Statistics */}
+            {cars.length > 0 && (
+                <div className="content-section" style={{ marginTop: 'var(--space-6)' }}>
+                    <div className="stats-grid">
+                        <div className="card" style={{ textAlign: 'center' }}>
+                            <div className="card-body">
+                                <div style={{ fontSize: '2rem', marginBottom: 'var(--space-2)' }}>🚗</div>
+                                <h4 style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'var(--font-weight-bold)', margin: '0 0 var(--space-1) 0' }}>
+                                    {cars.length}
+                                </h4>
+                                <p style={{ margin: 0, color: 'var(--color-gray-600)', fontSize: 'var(--font-size-sm)' }}>
+                                    Total Vehicles
+                                </p>
                             </div>
-                        </form>
-                    </div>  
-                </div>}
-            </div>
+                        </div>
+                        <div className="card" style={{ textAlign: 'center' }}>
+                            <div className="card-body">
+                                <div style={{ fontSize: '2rem', marginBottom: 'var(--space-2)' }}>👤</div>
+                                <h4 style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'var(--font-weight-bold)', margin: '0 0 var(--space-1) 0' }}>
+                                    {cars.filter(car => car.driver).length}
+                                </h4>
+                                <p style={{ margin: 0, color: 'var(--color-gray-600)', fontSize: 'var(--font-size-sm)' }}>
+                                    Assigned Vehicles
+                                </p>
+                            </div>
+                        </div>
+                        <div className="card" style={{ textAlign: 'center' }}>
+                            <div className="card-body">
+                                <div style={{ fontSize: '2rem', marginBottom: 'var(--space-2)' }}>📅</div>
+                                <h4 style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'var(--font-weight-bold)', margin: '0 0 var(--space-1) 0' }}>
+                                    {cars.filter(car => isExpirySoon(car.disc_expiry)).length}
+                                </h4>
+                                <p style={{ margin: 0, color: 'var(--color-gray-600)', fontSize: 'var(--font-size-sm)' }}>
+                                    Expiring Soon
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
+
+    // Helper function to check if disc expiry is within 30 days
+    function isExpirySoon(expiryDate) {
+        if (!expiryDate) return false;
+
+        try {
+            const [day, month, year] = expiryDate.split('/');
+            const expiry = new Date(`${year}-${month}-${day}`);
+            const today = new Date();
+            const thirtyDaysFromNow = new Date(today.getTime() + (30 * 24 * 60 * 60 * 1000));
+
+            return expiry <= thirtyDaysFromNow;
+        } catch (error) {
+            return false;
+        }
+    }
 }
