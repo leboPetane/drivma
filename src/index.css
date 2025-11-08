@@ -1,13 +1,25 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+/* Import Modern Theme CSS */
+@import './styles/modern-theme.css';
 
+/* Code styling for better readability */
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+  background: var(--color-gray-100);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.9em;
+}
+
+pre {
+  background: var(--color-gray-100);
+  padding: var(--space-4);
+  border-radius: var(--border-radius-md);
+  overflow-x: auto;
+  font-size: var(--font-size-sm);
+}
+
+pre code {
+  background: none;
+  padding: 0;
 }
