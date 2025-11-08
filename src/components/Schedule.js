@@ -225,108 +225,221 @@ export const Schedule = ({logout}) => {
     
  
     return (
-        <div>
-            <div className='card p-2'>
-                <b className='pr-5 mr-3'>Book For:</b> 
-                <div className='d-flex p-3'>
-                    
-                    <select className="form-group form-control mr-2" onChange={(e) => instructorFilter(e.target.value)} disabled={!(instructors.length > 0)}>
-                        <option value="-1">{"<Select Instructor>"}</option>
-                        <option value="0">All Instructors</option>
-                        {instructors.length > 0 && instructors.map((instr) => <option key={instr._id} value={instr._id}>{instr.first_name + " " + instr.last_name}</option>)}
-                    </select>
-                    <select className="form-group form-control" onChange={(e) => learnerFilter(e.target.value)} disabled={!(learners.length > 0)}>
-                        <option value="0">{"<Select Student>"}</option>
-                        {learners.length > 0 && learners.map((learnerInp) => <option key={learnerInp._id} value={learnerInp._id}>{learnerInp.first_name + " " + learnerInp.last_name}</option>)}
-                    </select>
-            </div>
-            
-            
+        <div className="content-section">
+            <div className="d-flex justify-between align-center mb-6">
+                <h3 style={{ fontSize: 'var(--font-size-xl)', fontWeight: 'var(--font-weight-semibold)', margin: 0 }}>
+                    📅 Schedule Management
+                </h3>
+                <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                    <button
+                        className="btn btn-outline"
+                        onClick={onPrev}
+                    >
+                        ← Previous Week
+                    </button>
+                    <button
+                        className="btn btn-outline"
+                        onClick={onNext}
+                    >
+                        Next Week →
+                    </button>
+                </div>
             </div>
 
-            <div className="card">
-                <div className="card-header">
-                    <button className="btn btn-info" onClick={onPrev}>prev</button>
-                    <button className="btn btn-info" onClick={onNext}>next</button>
+            {/* Booking Controls */}
+            <div className="content-section" style={{ marginBottom: 'var(--space-6)' }}>
+                <div style={{ display: 'flex', gap: 'var(--space-4)', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+                    <div style={{ flex: 1, minWidth: '200px' }}>
+                        <label className="form-label" style={{ marginBottom: 'var(--space-2)' }}>
+                            👨‍🏫 Select Instructor
+                        </label>
+                        <select
+                            className="form-control"
+                            onChange={(e) => instructorFilter(e.target.value)}
+                            disabled={!(instructors.length > 0)}
+                            style={{ width: '100%' }}
+                        >
+                            <option value="-1">Select Instructor</option>
+                            <option value="0">All Instructors</option>
+                            {instructors.length > 0 && instructors.map((instr) => (
+                                <option key={instr._id} value={instr._id}>
+                                    {instr.first_name} {instr.last_name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div style={{ flex: 1, minWidth: '200px' }}>
+                        <label className="form-label" style={{ marginBottom: 'var(--space-2)' }}>
+                            👨‍🎓 Select Student
+                        </label>
+                        <select
+                            className="form-control"
+                            onChange={(e) => learnerFilter(e.target.value)}
+                            disabled={!(learners.length > 0)}
+                            style={{ width: '100%' }}
+                        >
+                            <option value="0">Select Student</option>
+                            {learners.length > 0 && learners.map((learnerInp) => (
+                                <option key={learnerInp._id} value={learnerInp._id}>
+                                    {learnerInp.first_name} {learnerInp.last_name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
-                <div className="card-body table-responsive">
-                    <table className="table">
-                        <thead className=" text-primary text-center">
-                            <tr>
-                                    <th> {nextWeekDateStr.split(" ")[1] + " " + nextWeekDateStr.split(" ")[3]} </th>
-                                    {weekDates.map(wkday => 
-                                    <th key={wkday.id} className={((new Date()).getDate() === wkday.date && (new Date).getMonth() === wkday.month ? "bg-secondary" : "")}>
-                                        {(wkday.day === 0 ? "SUN" : 
-                                            wkday.day === 1 ? "MON" : 
-                                            wkday.day === 2 ? "TUE" : 
-                                            wkday.day === 3 ? "WED" : 
-                                            wkday.day === 4 ? "THUR":
-                                            wkday.day === 5 ? "FRI" : "SAT")}
-                                        <div className='text-center'>{wkday.date}</div>
-                                    </th>)}
-                                    
-                            </tr>
-                            </thead>
-                            <tbody>
-                                {schedule.map(item => 
-                                    <tr key={Math.random() * 3546120 }>
-                                        <th> {item.time}    </th>
-                                        <td>
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[0].date+"/"+weekDates[0].month+"/"+weekDates[0].year) && 
-                                                getCurrentLesson(item.time.substring(0,2),weekDates[0].date+"/"+weekDates[0].month+"/"+weekDates[0].year).map((obj) => <p key={obj._id}>Lesson with {obj.learner} <br></br> <span className='badge badge-warning'>{obj.instructor} </span></p>) }
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[0].date+"/"+weekDates[0].month+"/"+weekDates[0].year) === false && 
-                                                <button disabled={!weekDates[0].bookable} className='btn btn-outline-info' onClick={() => bookAppointment(weekDates[0].date,weekDates[0].month,weekDates[0].year,item.time)}>Book Appointment</button> 
-                                            }
-                                        </td>
-                                        <td>
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[1].date+"/"+weekDates[1].month+"/"+weekDates[1].year) && 
-                                                getCurrentLesson(item.time.substring(0,2),weekDates[1].date+"/"+weekDates[1].month+"/"+weekDates[1].year).map((obj) => <p>Lesson with {obj.learner} <br></br> <span className='badge badge-warning'>{obj.instructor} </span></p>)} 
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[1].date+"/"+weekDates[1].month+"/"+weekDates[1].year) === false && 
-                                                <button disabled={!weekDates[1].bookable} className='btn btn-outline-info' onClick={() => bookAppointment(weekDates[1].date,weekDates[1].month,weekDates[1].year,item.time)}>Book Appointment</button> 
-                                            }
-                                        </td>
-                                        <td>
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[2].date+"/"+weekDates[2].month+"/"+weekDates[2].year) && 
-                                                getCurrentLesson(item.time.substring(0,2),weekDates[2].date+"/"+weekDates[2].month+"/"+weekDates[2].year).map((obj) => <p>Lesson with {obj.learner} <br></br> <span className='badge badge-warning'>{obj.instructor} </span></p>)} 
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[2].date+"/"+weekDates[2].month+"/"+weekDates[2].year) === false && 
-                                                <button disabled={!weekDates[2].bookable} className='btn btn-outline-info' onClick={() => bookAppointment(weekDates[2].date,weekDates[2].month,weekDates[2].year,item.time)}>Book Appointment</button> 
-                                            }
-                                        </td>
-                                        <td>
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[3].date+"/"+weekDates[3].month+"/"+weekDates[3].year) && 
-                                                getCurrentLesson(item.time.substring(0,2),weekDates[3].date+"/"+weekDates[3].month+"/"+weekDates[3].year).map((obj) => <p>Lesson with {obj.learner} <br></br> <span className='badge badge-warning'>{obj.instructor} </span></p>)} 
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[3].date+"/"+weekDates[3].month+"/"+weekDates[3].year) === false && 
-                                                <button disabled={!weekDates[3].bookable} className='btn btn-outline-info' onClick={() => bookAppointment(weekDates[3].date,weekDates[3].month,weekDates[3].year,item.time)}>Book Appointment</button> 
-                                            }
-                                        </td>
-                                        <td>
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[4].date+"/"+weekDates[4].month+"/"+weekDates[4].year) && 
-                                                getCurrentLesson(item.time.substring(0,2),weekDates[4].date+"/"+weekDates[4].month+"/"+weekDates[4].year).map((obj) => <p>Lesson with {obj.learner} <br></br> <span className='badge badge-warning'>{obj.instructor} </span></p>)} 
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[4].date+"/"+weekDates[4].month+"/"+weekDates[4].year) === false && 
-                                                <button disabled={!weekDates[4].bookable} className='btn btn-outline-info' onClick={() => bookAppointment(weekDates[4].date,weekDates[4].month,weekDates[4].year,item.time)}>Book Appointment</button> 
-                                            }
-                                        </td>
-                                        <td>
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[5].date+"/"+weekDates[5].month+"/"+weekDates[5].year) && 
-                                                getCurrentLesson(item.time.substring(0,2),weekDates[5].date+"/"+weekDates[5].month+"/"+weekDates[5].year).map((obj) => <p>Lesson with {obj.learner} <br></br> <span className='badge badge-warning'>{obj.instructor} </span></p>)} 
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[5].date+"/"+weekDates[5].month+"/"+weekDates[5].year) === false && 
-                                                <button disabled={!weekDates[5].bookable} className='btn btn-outline-info' onClick={() => bookAppointment(weekDates[5].date,weekDates[5].month,weekDates[5].year,item.time)}>Book Appointment</button> 
-                                            }
-                                        </td>
-                                        <td>
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[6].date+"/"+weekDates[6].month+"/"+weekDates[6].year) && 
-                                                getCurrentLesson(item.time.substring(0,2),weekDates[6].date+"/"+weekDates[6].month+"/"+weekDates[6].year).map((obj) => <p>Lesson with {obj.learner} <br></br> <span className='badge badge-warning'>{obj.instructor} </span></p>)} 
-                                            {getCurrentLesson(item.time.substring(0,2),weekDates[6].date+"/"+weekDates[6].month+"/"+weekDates[6].year) === false && 
-                                                <button disabled={!weekDates[6].bookable} className='btn btn-outline-info' onClick={() => bookAppointment(weekDates[6].date,weekDates[6].month,weekDates[6].year,item.time)}>Book Appointment</button> 
-                                            }
-                                        </td>
-                                        
-                                    </tr>
-                                )}
-                        </tbody>
-                      </table>
-                </div>
+
+                {focusedInstructor === "0" && (
+                    <div style={{ background: 'var(--color-info)', border: '1px solid var(--color-primary)', borderRadius: 'var(--border-radius-sm)', padding: 'var(--space-3)', marginTop: 'var(--space-4)' }}>
+                        <p style={{ margin: 0, fontSize: 'var(--font-size-sm)', color: 'var(--color-primary)' }}>
+                            <strong>💡 Tip:</strong> Select an instructor to view their weekly schedule and book lessons.
+                        </p>
+                    </div>
+                )}
+
+                {focusedInstructor !== "0" && focusedLearner === "0" && (
+                    <div style={{ background: 'var(--color-warning)', border: '1px solid var(--color-warning)', borderRadius: 'var(--border-radius-sm)', padding: 'var(--space-3)', marginTop: 'var(--space-4)' }}>
+                        <p style={{ margin: 0, fontSize: 'var(--font-size-sm)', color: 'var(--color-warning)' }}>
+                            <strong>⚠️ Note:</strong> Select a student to enable lesson booking.
+                        </p>
+                    </div>
+                )}
             </div>
+
+            {/* Schedule Grid */}
+            {schedule.length > 0 && weekDates.length > 0 && (
+                <div className="content-section">
+                    <div style={{ background: 'var(--color-white)', borderRadius: 'var(--border-radius-md)', border: '1px solid var(--color-gray-200)', overflow: 'hidden' }}>
+                        {/* Week Header */}
+                        <div style={{ padding: 'var(--space-4)', background: 'var(--color-gray-50)', borderBottom: '1px solid var(--color-gray-200)' }}>
+                            <h4 style={{ textAlign: 'center', margin: 0, color: 'var(--color-gray-800)' }}>
+                                📆 {nextWeekDateStr.split(" ")[1]} {nextWeekDateStr.split(" ")[3]}
+                            </h4>
+                        </div>
+
+                        <div className="table-responsive">
+                            <table className="schedule-grid">
+                                <thead>
+                                    <tr>
+                                        <th style={{ background: 'var(--color-gray-100)' }}>Time</th>
+                                        {weekDates.map((wkday, index) => (
+                                            <th
+                                                key={wkday.id}
+                                                style={{
+                                                    background: isToday(wkday.date, wkday.month) ? 'var(--color-primary)' : 'var(--color-gray-100)',
+                                                    color: isToday(wkday.date, wkday.month) ? 'var(--color-white)' : 'var(--color-gray-800)'
+                                                }}
+                                            >
+                                                <div style={{ fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-semibold)' }}>
+                                                    {['SUN', 'MON', 'TUE', 'WED', 'THUR', 'FRI', 'SAT'][wkday.day]}
+                                                </div>
+                                                <div style={{ fontSize: 'var(--font-size-base)', fontWeight: 'var(--font-weight-bold)' }}>
+                                                    {wkday.date}
+                                                </div>
+                                                {isToday(wkday.date, wkday.month) && (
+                                                    <div style={{ fontSize: 'var(--font-size-xs)' }}>Today</div>
+                                                )}
+                                            </th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {schedule.map((item, rowIndex) => (
+                                        <tr key={rowIndex}>
+                                            <td className="schedule-time-slot">
+                                                {item.time}
+                                            </td>
+                                            {Array.from({ length: 7 }, (_, colIndex) => {
+                                                const lessons = getCurrentLesson(
+                                                    item.time.substring(0, 2),
+                                                    `${weekDates[colIndex].date}/${weekDates[colIndex].month}/${weekDates[colIndex].year}`
+                                                );
+                                                const isBookable = weekDates[colIndex].bookable;
+
+                                                return (
+                                                    <td key={colIndex} className="schedule-cell">
+                                                        {lessons && lessons.length > 0 ? (
+                                                            <div className="space-y-2">
+                                                                {lessons.map((lesson) => (
+                                                                    <div
+                                                                        key={lesson._id}
+                                                                        className="schedule-lesson"
+                                                                        style={{ cursor: 'pointer' }}
+                                                                        title={`Lesson with ${lesson.learner}`}
+                                                                    >
+                                                                        <div style={{ fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-medium)' }}>
+                                                                            {lesson.learner}
+                                                                        </div>
+                                                                        <div style={{ fontSize: 'var(--font-size-xs)', opacity: 0.8 }}>
+                                                                            {lesson.area}
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        ) : (
+                                                            <button
+                                                                className="btn btn-primary btn-sm"
+                                                                onClick={() => bookAppointment(
+                                                                    weekDates[colIndex].date,
+                                                                    weekDates[colIndex].month,
+                                                                    weekDates[colIndex].year,
+                                                                    item.time
+                                                                )}
+                                                                disabled={!isBookable || focusedLearner === "0"}
+                                                                style={{
+                                                                    width: '100%',
+                                                                    opacity: (!isBookable || focusedLearner === "0") ? 0.5 : 1,
+                                                                    cursor: (!isBookable || focusedLearner === "0") ? 'not-allowed' : 'pointer'
+                                                                }}
+                                                            >
+                                                                📅 Book
+                                                            </button>
+                                                        )}
+                                                    </td>
+                                                );
+                                            })}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {/* Legend */}
+                    <div style={{ display: 'flex', gap: 'var(--space-4)', justifyContent: 'center', marginTop: 'var(--space-4)', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', align: 'center', gap: 'var(--space-1)' }}>
+                            <div style={{ width: '12px', height: '12px', background: 'var(--color-primary)', borderRadius: 'var(--border-radius-sm)' }}></div>
+                            <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-gray-600)' }}>Today</span>
+                        </div>
+                        <div style={{ display: 'flex', align: 'center', gap: 'var(--space-1)' }}>
+                            <div style={{ width: '12px', height: '12px', background: 'var(--color-primary)', borderRadius: 'var(--border-radius-sm)' }}></div>
+                            <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-gray-600)' }}>Booked Lesson</span>
+                        </div>
+                        <div style={{ display: 'flex', align: 'center', gap: 'var(--space-1)' }}>
+                            <div style={{ width: '12px', height: '12px', border: '1px solid var(--color-gray-300)', borderRadius: 'var(--border-radius-sm)' }}></div>
+                            <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-gray-600)' }}>Available</span>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Empty State */}
+            {schedule.length === 0 && focusedInstructor !== "0" && (
+                <div style={{ textAlign: 'center', padding: 'var(--space-8)', color: 'var(--color-gray-500)' }}>
+                    <div style={{ fontSize: '3rem', marginBottom: 'var(--space-4)' }}>📅</div>
+                    <h4 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-medium)', marginBottom: 'var(--space-2)' }}>
+                        No Schedule Available
+                    </h4>
+                    <p style={{ fontSize: 'var(--font-size-sm)' }}>
+                        The schedule will load once you select an instructor.
+                    </p>
+                </div>
+            )}
         </div>
     )
+
+    // Helper function to check if a date is today
+    function isToday(date, month) {
+        const today = new Date();
+        return date === today.getDate() && month === today.getMonth();
+    }
 }
